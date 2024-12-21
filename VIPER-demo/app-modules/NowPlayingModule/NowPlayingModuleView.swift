@@ -33,8 +33,11 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MOVIE_CELL_IDENTIFIER, for: indexPath)
         //cell.backgroundColor = UIColor.blue
+        if(cell.contentView.subviews.count == 1) {
+            cell.contentView.subviews[0].removeFromSuperview()
+        }
         let view = UIHostingController(rootView: MovieTableViewCell(movie: movies![indexPath.row])).view
-        view?.frame = cell.frame
+        view?.frame = cell.contentView.frame
         cell.contentView.addSubview(view!)
         /*cell.mTitle.text = arrayList[indexPath.row].title
          cell.mDescription.text = arrayList[indexPath.row].brief
