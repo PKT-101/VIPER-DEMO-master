@@ -32,25 +32,13 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MOVIE_CELL_IDENTIFIER, for: indexPath)
-        //cell.backgroundColor = UIColor.blue
+ 
         if(cell.contentView.subviews.count == 1) {
             cell.contentView.subviews[0].removeFromSuperview()
         }
         let view = UIHostingController(rootView: MovieTableViewCell(movie: movies![indexPath.row])).view
         view?.frame = cell.contentView.frame
         cell.contentView.addSubview(view!)
-        /*cell.mTitle.text = arrayList[indexPath.row].title
-         cell.mDescription.text = arrayList[indexPath.row].brief
-         
-         // this things should be done in interactor where the business logid is done and should be send back to viewController
-         AF.request(self.arrayList[indexPath.row].imagesource!).responseData { (response) in
-         if response.error == nil {
-         print(response.result)
-         if let data = response.data {
-         cell.mImageView.image = UIImage(data: data)
-         }
-         }
-         }*/
         
         return cell
     }
@@ -58,6 +46,23 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        if(Huston.shared.userStatus != .loggedIn) {
+            return nil
+        }
+        let movie = movies![indexPath.row]
+        let item = UIContextualAction(style: movie.isFavourite ? .destructive : .normal, title: movie.isFavourite ? "Delete" : "Add") {  (contextualAction, view, boolValue) in
+                //Write your code in here
+                boolValue(true)
+                DataManager.switchFavouriteState(id: movie.id)
+            }
+            
+            let swipeActions = UISwipeActionsConfiguration(actions: [item])
+            swipeActions.performsFirstActionWithFullSwipe = false
+            return swipeActions
+        }
 }
 
 struct MovieTableViewCell : View {
@@ -75,7 +80,8 @@ struct MovieTableViewCell : View {
             Spacer()
             HStack {
                 Text(movie!.originalTitle)
-                    .padding(.leading).foregroundColor(.blue).background(Color.red)
+                    .padding(.leading)
+                    .foregroundColor(.blue)
                 Spacer()
             }
             Spacer()

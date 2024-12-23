@@ -85,6 +85,7 @@ extension Flow: WebModuleFlow {
     func loginStatus(success: Bool) {
         var module: Module?
         if(success) {
+            Huston.shared.userLoggedIn()
             module = NowPlayingModule().prepareModule()
         } else {
             module = LoginModule().prepareModule()

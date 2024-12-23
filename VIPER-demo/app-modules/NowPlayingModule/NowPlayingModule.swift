@@ -45,6 +45,8 @@ class NowPlayingModule: Module {
 extension NowPlayingModule: NowPlayingModuleEventsHandler {
     
     func prepareData() {
+        DataManager.fetchFavourites()
+        
         movies = try! Realm().objects(Movie.self)
         Flow.shared.renderStatusView(message: "Found " + String(movies!.count) + " movies")
     }

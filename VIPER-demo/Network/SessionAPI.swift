@@ -11,7 +11,7 @@ import Alamofire
 class SessionAPI {
     
     static var token: String?
-    private static var session: String?
+    static var session: String?
     
     private static let API_GET_REQUEST_TOKEN = "https://api.themoviedb.org/3/authentication/token/new"
     private static let API_REQUEST_TOKEN = "request_token"
