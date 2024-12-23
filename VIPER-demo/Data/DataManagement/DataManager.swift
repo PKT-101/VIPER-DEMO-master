@@ -66,7 +66,7 @@ class DataManager {
         }
     }
     
-    static func switchFavouriteState(id: Int) {
+    static func switchFavouriteState(id: Int, onCompletion: @escaping() -> Void) {
         if(Huston.shared.userStatus == .loggedIn) {
             FavouritesAPI.updateFavouritesList(id: id) { result in
                 let realm = try! Realm()
@@ -76,6 +76,7 @@ class DataManager {
                 try! realm.commitWrite()
                 Task {
                     await actor.updateFavouriteMovies(favouriteMovies: MoviesListAPI.fetchMovies(favourities: true)!)
+                    onCompletion()
                 }
             }
         }

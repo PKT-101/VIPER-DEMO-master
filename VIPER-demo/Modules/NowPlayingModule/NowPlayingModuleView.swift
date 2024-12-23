@@ -36,7 +36,7 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
         if(cell.contentView.subviews.count == 1) {
             cell.contentView.subviews[0].removeFromSuperview()
         }
-        let view = UIHostingController(rootView: MovieTableViewCell(movie: movies![indexPath.row])).view
+        let view = UIHostingController(rootView: MovieTableViewCell(movie_: movies![indexPath.row])).view
         view?.frame = cell.contentView.frame
         cell.contentView.addSubview(view!)
         
@@ -48,42 +48,56 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        
         if(Huston.shared.userStatus != .loggedIn) {
             return nil
         }
         let movie = movies![indexPath.row]
         let item = UIContextualAction(style: movie.isFavourite ? .destructive : .normal, title: movie.isFavourite ? "Delete" : "Add") {  (contextualAction, view, boolValue) in
-                //Write your code in here
-                boolValue(true)
-                DataManager.switchFavouriteState(id: movie.id)
+            //Write your code in here
+            boolValue(true)
+            self.view.isUserInteractionEnabled = false
+            Flow.shared.renderStatusView(message: "Updating favourites list")
+            DataManager.switchFavouriteState(id: movie.id) { [self] in
+                DispatchQueue.main.async {
+                    self.view.isUserInteractionEnabled = true
+                    Flow.shared.renderStatusView(message: "Found " + String(self.movies!.count) + " movies")
+                    self.movies = try! Realm().objects(Movie.self)
+                    tableView.reloadData()
+                }
             }
-            
-            let swipeActions = UISwipeActionsConfiguration(actions: [item])
-            swipeActions.performsFirstActionWithFullSwipe = false
-            return swipeActions
         }
+        let swipeActions = UISwipeActionsConfiguration(actions: [item])
+        swipeActions.performsFirstActionWithFullSwipe = false
+        return swipeActions
+    }
 }
+
 
 struct MovieTableViewCell : View {
     
-    var movie: Movie?
+    var movie: Movie
+    
+    init(movie_: Movie) {
+        movie = movie_
+    }
     
     var body: some View {
         VStack {
             Spacer()
             HStack {
-                Text(movie!.title)
+                Text(movie.title)
                     .padding(.leading)
                 Spacer()
             }
             Spacer()
             HStack {
-                Text(movie!.originalTitle)
+                Text(movie.originalTitle)
                     .padding(.leading)
                     .foregroundColor(.blue)
                 Spacer()
+                Image("a").frame(minWidth: 10, minHeight: 10).background(movie.isFavourite ? .yellow : .black).cornerRadius(5).padding(.trailing)
             }
+            
             Spacer()
         }.frame(
             minWidth: 0,
@@ -94,6 +108,6 @@ struct MovieTableViewCell : View {
     }
 }
 
-#Preview {
+/*#Preview {
     MovieTableViewCell(movie: try! Realm().objects(Movie.self).first)
-}
+}*/

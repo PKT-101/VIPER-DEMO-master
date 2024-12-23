@@ -119,16 +119,16 @@
 				EFB3D8D92D15FBE400E97D3A /* ApplicationLogic */,
 				EFB3D8C22D14ACD200E97D3A /* Data */,
 				EFB3D8C12D14ACB400E97D3A /* Network */,
+				D4D61A4620E6136C0087F31F /* Modules */,
 				D4D61A4920E614020087F31F /* app-icons */,
 				D4D61A4820E613D40087F31F /* views */,
 				D4D61A4720E6138E0087F31F /* app-settings */,
-				D4D61A4620E6136C0087F31F /* app-modules */,
 				D4A0F17320EA22470088F11B /* common-utils */,
 			);
 			path = "VIPER-demo";
 			sourceTree = "<group>";
 		};
-		D4D61A4620E6136C0087F31F /* app-modules */ = {
+		D4D61A4620E6136C0087F31F /* Modules */ = {
 			isa = PBXGroup;
 			children = (
 				EFB3D8E62D169B7300E97D3A /* Module.swift */,
@@ -136,7 +136,7 @@
 				EFB3D8E12D1699AA00E97D3A /* WebModule */,
 				EFB3D8DC2D16081900E97D3A /* LoginModule */,
 			);
-			path = "app-modules";
+			path = Modules;
 			sourceTree = "<group>";
 		};
 		D4D61A4720E6138E0087F31F /* app-settings */ = {
