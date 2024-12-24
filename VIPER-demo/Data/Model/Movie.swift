@@ -27,8 +27,8 @@ private let VOTES_COUNT = "votes_count"
 private let BACKDROP_PATH = "backdorp_path"
 private let POSTER_PATH = "poster_path"
 
-class Movie: Object, Mappable {
-    @Persisted(primaryKey: true) var id: Int
+class Movie: Object, Mappable, ObjectKeyIdentifiable{
+    @Persisted(primaryKey: true) var id_pk: Int
     
     @Persisted var genreIds: List<Genre>
     @Persisted var adult: Bool
@@ -59,7 +59,8 @@ class Movie: Object, Mappable {
     }
     
     func mapping(map: ObjectMapper.Map) {
-        id <- map[ID]
+        var ma = map.JSON
+        id_pk = ma.removeValue(forKey: "id") as! Int
         
         var genres:[Int]?
         genres <- map[GENRE_IDS]

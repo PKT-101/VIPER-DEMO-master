@@ -66,9 +66,9 @@ class DataManager {
         }
     }
     
-    static func switchFavouriteState(id: Int, onCompletion: @escaping() -> Void) {
+    static func switchFavouriteState(id: Int, isFavoirte: Bool, onCompletion: @escaping() -> Void) {
         if(Huston.shared.userStatus == .loggedIn) {
-            FavouritesAPI.updateFavouritesList(id: id) { result in
+            FavouritesAPI.updateFavouritesList(id: id, isFavourite: isFavoirte) { result in
                 let realm = try! Realm()
                 realm.beginWrite()
                 let movie = try! Realm().object(ofType: Movie.self, forPrimaryKey: id)

@@ -57,12 +57,11 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
             boolValue(true)
             self.view.isUserInteractionEnabled = false
             Flow.shared.renderStatusView(message: "Updating favourites list")
-            DataManager.switchFavouriteState(id: movie.id) { [self] in
+            DataManager.switchFavouriteState(id: movie.id_pk, isFavoirte: !movie.isFavourite) { [self] in
                 DispatchQueue.main.async {
                     self.view.isUserInteractionEnabled = true
                     Flow.shared.renderStatusView(message: "Found " + String(self.movies!.count) + " movies")
                     self.movies = try! Realm().objects(Movie.self)
-                    tableView.reloadData()
                 }
             }
         }
@@ -75,7 +74,7 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
 
 struct MovieTableViewCell : View {
     
-    var movie: Movie
+    @ObservedRealmObject var movie: Movie
     
     init(movie_: Movie) {
         movie = movie_
