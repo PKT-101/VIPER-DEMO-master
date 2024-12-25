@@ -10,7 +10,7 @@ import RealmSwift
 
 let MOVIE_CELL_IDENTIFIER = "MovieCell"
 
-extension NowPlayingModule: NowPlayingModuleViewRenderer {
+extension NowPlayingModule: NowPlayingModuleViewRenderer, UISearchBarDelegate {
     
     func renderView() {
         self.navigationItem.setHidesBackButton(true, animated: false)
@@ -21,7 +21,9 @@ extension NowPlayingModule: NowPlayingModuleViewRenderer {
         
         let searchBarView = UISearchBar()
         searchBarView.frame = CGRect(x: 15, y: 96, width: self.view.frame.size.width - 30, height: 64)
-        let uiTableView = UITableView(frame: CGRect(x: 0, y: 96 + 64, width: self.view.frame.size.width, height: self.view.frame.size.height - 64 - 64 - 96))
+        searchBarView.delegate = self
+        
+        let uiTableView = UITableView(frame: CGRect(x: 0, y: 96 + 64, width: self.view.frame.size.width, height: self.view.frame.size.height - 64 - 50 - 96))
         tableView = uiTableView
         tableView!.clipsToBounds = true
         tableView!.register(UITableViewCell.self, forCellReuseIdentifier: MOVIE_CELL_IDENTIFIER)
@@ -36,7 +38,7 @@ extension NowPlayingModule: NowPlayingModuleViewRenderer {
 extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movies!.count
+        return filteredMovies!.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -46,7 +48,7 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
             view.removeFromSuperview()
         }
         
-        let view = UIHostingController(rootView: MovieTableViewCell(movie: movies![indexPath.row])).view
+        let view = UIHostingController(rootView: MovieTableViewCell(movie: filteredMovies![indexPath.row])).view
         view!.frame = cell.contentView.frame
         view!.backgroundColor = UIColor.clear
         cell.contentView.addSubview(view!)
@@ -61,12 +63,12 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("selected")
         tableView.deselectRow(at: indexPath, animated: true)
-        eventsHandler?.showMovieDetails(id: movies![indexPath.row].id_pk)
+        eventsHandler?.showMovieDetails(id: filteredMovies![indexPath.row].id_pk)
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        let movie = movies![indexPath.row]
+        let movie = filteredMovies![indexPath.row]
         let item = UIContextualAction(style: movie.isFavourite ? .destructive : .normal, title: Huston.shared.userStatus == .loggedIn ? (movie.isFavourite ? "Delete" : "Add") : "Log in") { [self]  (contextualAction, view, boolValue) in
             boolValue(true)
             

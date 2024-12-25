@@ -72,11 +72,12 @@ extension Flow: WebModuleFlow {
             Huston.shared.userLoggedIn()
             if(previousModule is LoginModule) {
                 module = NowPlayingModule().prepareModule()
+                let loginModule = (window!.rootViewController! as! UINavigationController).viewControllers.last
+                (window!.rootViewController! as! UINavigationController).setViewControllers([module!, loginModule!], animated: false)
             } else {
                 (module! as! ModuleEventsHandler).refreshData()
             }
         }
-        //setCurrentModule(module: module!)
         (window!.rootViewController! as! UINavigationController).popViewController(animated: true)
     }
 }

@@ -1518,8 +1518,8 @@
             filePath = "VIPER-demo/ApplicationLogic/Modules/NowPlayingModule/NowPlayingModuleView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
+            startingLineNumber = "26"
+            endingLineNumber = "26"
             landmarkName = "renderView()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1534,8 +1534,8 @@
             filePath = "VIPER-demo/ApplicationLogic/Modules/NowPlayingModule/NowPlayingModuleView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "63"
-            endingLineNumber = "63"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
             landmarkName = "tableView(_:didSelectRowAt:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1550,8 +1550,8 @@
             filePath = "VIPER-demo/ApplicationLogic/Flow.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
             landmarkName = "showMovieDetails(id:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1582,8 +1582,8 @@
             filePath = "VIPER-demo/ApplicationLogic/Flow.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
             landmarkName = "loginStatus(success:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1633,6 +1633,38 @@
             startingLineNumber = "36"
             endingLineNumber = "36"
             landmarkName = "renderView()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "54477FE5-E6C5-4BB9-AB2B-B601924C463D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VIPER-demo/ApplicationLogic/Modules/NowPlayingModule/NowPlayingModule.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "79"
+            endingLineNumber = "79"
+            landmarkName = "searchBar(_:textDidChange:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "72E8CE58-AAD2-407A-B7E4-9AA38A6D3B4E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VIPER-demo/ApplicationLogic/Modules/NowPlayingModule/NowPlayingModule.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
+            landmarkName = "searchBarCancelButtonClicked(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

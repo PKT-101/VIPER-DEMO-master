@@ -27,6 +27,7 @@ class NowPlayingModule: Module {
     internal var eventsHandler: NowPlayingModuleEventsHandler?
 
     var movies: Results<Movie>?
+    var filteredMovies: Results<Movie>?
     
     override func prepareModule() -> Module {
         eventsHandler = self
@@ -44,6 +45,7 @@ extension NowPlayingModule: NowPlayingModuleEventsHandler {
         DataManager.shared.fetchFavourites()
         
         movies = try! Realm().objects(Movie.self)
+        filteredMovies = movies
         Huston.shared.renderStatusView(message: "Found " + String(movies!.count) + " movies")
     }
     
@@ -59,7 +61,7 @@ extension NowPlayingModule: NowPlayingModuleEventsHandler {
                 DispatchQueue.main.async {
                     self.view.isUserInteractionEnabled = true
                     Huston.shared.renderStatusView(message: "Found " + String(self.movies!.count) + " movies")
-                    self.movies = try! Realm().objects(Movie.self)
+                    self.movies = try! Realm().objects(Movie.self).sorted(byKeyPath: "title" , ascending: true)
                 }
             }
         } else {
@@ -73,4 +75,22 @@ extension NowPlayingModule: NowPlayingModuleEventsHandler {
         Flow.shared.showMovieDetails(id: id)
     }
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if(searchText.count > 0) {
+            let lowercaseSearchtext = searchText.lowercased()
+            filteredMovies = movies!.sorted(byKeyPath: "title" , ascending: true).where {
+                $0.searchable.contains(lowercaseSearchtext)
+            }
+        } else {
+            filteredMovies = movies
+        }
+        Huston.shared.renderStatusView(message: "Foumd " + String(filteredMovies!.count) + " matches")
+
+        tableView!.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        filteredMovies = movies
+        tableView!.reloadData()
+    }
 }

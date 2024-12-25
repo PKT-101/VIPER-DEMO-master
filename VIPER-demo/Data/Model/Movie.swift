@@ -48,7 +48,7 @@ class Movie: Object, Mappable, ObjectKeyIdentifiable {
     @Persisted var posterPath: String
     
     @Persisted var isFavourite: Bool
-    
+    @Persisted var searchable: String
     override init() {
         super.init()
     }
@@ -91,5 +91,6 @@ class Movie: Object, Mappable, ObjectKeyIdentifiable {
         backdropPath <- map[BACKDROP_PATH]
         posterPath <- map[POSTER_PATH]
         
+        searchable = title.lowercased()
     }
 }
