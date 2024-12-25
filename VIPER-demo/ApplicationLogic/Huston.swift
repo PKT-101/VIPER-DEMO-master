@@ -28,15 +28,7 @@ class Huston {
     
     @MainActor func setup(window: UIWindow) {
         self.window = window
-        
-        let font = UIFont(name: "AmericanTypewriter-Bold", size: 15)
-        UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.systemRed, NSAttributedString.Key.font : font as Any]
-        UINavigationBar.appearance().backgroundColor = UIColor.systemYellow
-        let frame = UIApplication.shared.statusBarFrame
-        let backview = UIView(frame: frame)
-        backview.backgroundColor = UIColor.systemYellow
-        window.addSubview(backview)
-        
+
         operationStatus = OperationStatus()
         progressIndicator = ProgressIndicator(text: "")
         self.window!.addSubview(progressIndicator!)

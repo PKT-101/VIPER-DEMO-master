@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-protocol LoginModuleFlow { //exit points from module, should be implemented by flow
+protocol LoginModuleFlow: LoginFlowProtocol { //exit points from module, should be implemented by flow
     func useAsGuest()
 }
 
@@ -46,6 +46,10 @@ extension LoginModule: LoginModuleEventsHandler {
             }
         }
     }
+    
+    func refreshData() {}
+    
+    func pop() {}
     
     func executeLogin() {
         Flow.shared.executeLogin()

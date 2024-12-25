@@ -18,6 +18,7 @@ class Module: UIViewController, ModuleLifecycle {
     func returnToForeground() { //application returned to foreground
         //optional method
     }
+    
 }
 
 protocol ModuleLifecycle {
@@ -31,4 +32,6 @@ protocol ModuleView {
 
 protocol ModuleEventsHandler {
     func prepareData()
+    func refreshData()
+    func pop()
 }

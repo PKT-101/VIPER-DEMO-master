@@ -9,7 +9,11 @@
 import Foundation
 import UIKit
 
-protocol LoginProtocol {
+protocol PopFlowProtocol {
+    func pop()
+}
+
+protocol LoginFlowProtocol {
     func executeLogin()
 }
 
@@ -17,6 +21,7 @@ protocol LoginProtocol {
     
     static let shared = Flow()
     private var window: UIWindow?
+    private var previousModule: Module?
     
     func start(window: UIWindow) {
         self.window = window
@@ -31,12 +36,15 @@ protocol LoginProtocol {
     }
     
     func setCurrentModule(module: Module) {
-        (window!.rootViewController! as! UINavigationController).viewControllers = [module]
+        var viewControllers = (window!.rootViewController! as! UINavigationController).viewControllers
+        viewControllers.append(module)
+        (window!.rootViewController! as! UINavigationController).setViewControllers(viewControllers, animated: true)
     }
 }
 
 extension Flow: LoginModuleFlow {
     func executeLogin() {
+        previousModule = ((window!.rootViewController! as! UINavigationController).viewControllers.last as! Module)
         Huston.shared.operation(inProgress: true)
         SessionAPI.getSessionToken { token in
             if(token != nil) {
@@ -48,11 +56,9 @@ extension Flow: LoginModuleFlow {
                 Huston.shared.operation(inProgress: false)
             }
         }
-        
     }
     
     func useAsGuest() {
-        print("Flow guest")
         Huston.shared.guestAccepted()
         setCurrentModule(module: NowPlayingModule().prepareModule())
         Huston.shared.renderStatusView(message: "No access to your Favourite movies")
@@ -61,13 +67,30 @@ extension Flow: LoginModuleFlow {
 
 extension Flow: WebModuleFlow {
     func loginStatus(success: Bool) {
-        var module: Module?
+        var module = previousModule
         if(success) {
             Huston.shared.userLoggedIn()
-            module = NowPlayingModule().prepareModule()
-        } else {
-            module = LoginModule().prepareModule()
+            if(previousModule is LoginModule) {
+                module = NowPlayingModule().prepareModule()
+            } else {
+                (module! as! ModuleEventsHandler).refreshData()
+            }
         }
-        setCurrentModule(module: module!)
+        //setCurrentModule(module: module!)
+        (window!.rootViewController! as! UINavigationController).popViewController(animated: true)
+    }
+}
+
+extension Flow: NowPlayingModuleFlow {
+    func showMovieDetails(id: Int) {
+        let module = MovieDetailsModule()
+        module.setMovie(id: id)
+        setCurrentModule(module: module.prepareModule())
+    }
+}
+
+extension Flow: PopFlowProtocol {
+    func pop() {
+        (window!.rootViewController! as! UINavigationController).popViewController(animated: true)
     }
 }

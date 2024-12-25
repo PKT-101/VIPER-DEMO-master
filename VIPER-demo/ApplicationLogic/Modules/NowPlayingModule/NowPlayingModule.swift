@@ -10,12 +10,15 @@ import UIKit
 import Realm
 import RealmSwift
 
-protocol NowPlayingModuleFlow: LoginProtocol { // exit points from module
+protocol NowPlayingModuleFlow: LoginFlowProtocol { // exit points from module
     func showMovieDetails(id: Int)
 }
 
 
-protocol NowPlayingModuleEventsHandler: ModuleEventsHandler {}
+protocol NowPlayingModuleEventsHandler: ModuleEventsHandler {
+    func switchFavouriteStatus(movie: Movie)
+    func showMovieDetails(id: Int)
+}
 
 protocol NowPlayingModuleViewRenderer: ModuleView {}
 
@@ -43,4 +46,31 @@ extension NowPlayingModule: NowPlayingModuleEventsHandler {
         movies = try! Realm().objects(Movie.self)
         Huston.shared.renderStatusView(message: "Found " + String(movies!.count) + " movies")
     }
+    
+    func refreshData() {
+        DataManager.shared.fetchFavourites()
+    }
+    
+    func switchFavouriteStatus(movie: Movie) {
+        if(Huston.shared.userStatus == .loggedIn) {
+            self.view.isUserInteractionEnabled = false
+            Huston.shared.renderStatusView(message: "Updating favourites list")
+            DataManager.shared.switchFavouriteState(id: movie.id_pk, isFavoirte: !movie.isFavourite) { [self] in
+                DispatchQueue.main.async {
+                    self.view.isUserInteractionEnabled = true
+                    Huston.shared.renderStatusView(message: "Found " + String(self.movies!.count) + " movies")
+                    self.movies = try! Realm().objects(Movie.self)
+                }
+            }
+        } else {
+            Flow.shared.executeLogin()
+        }
+    }
+    
+    func pop() {}
+    
+    func showMovieDetails(id: Int) {
+        Flow.shared.showMovieDetails(id: id)
+    }
+    
 }

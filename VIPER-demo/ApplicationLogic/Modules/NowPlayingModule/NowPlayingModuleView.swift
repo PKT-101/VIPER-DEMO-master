@@ -13,16 +13,23 @@ let MOVIE_CELL_IDENTIFIER = "MovieCell"
 extension NowPlayingModule: NowPlayingModuleViewRenderer {
     
     func renderView() {
+        self.navigationItem.setHidesBackButton(true, animated: false)
+        
         self.view.backgroundColor = UIColor.white
         self.title = "NOW Playing"
         
-        let uiTableView = UITableView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
+        
+        let searchBarView = UISearchBar()
+        searchBarView.frame = CGRect(x: 15, y: 96, width: self.view.frame.size.width - 30, height: 64)
+        let uiTableView = UITableView(frame: CGRect(x: 0, y: 96 + 64, width: self.view.frame.size.width, height: self.view.frame.size.height - 64 - 64 - 96))
         tableView = uiTableView
+        tableView!.clipsToBounds = true
         tableView!.register(UITableViewCell.self, forCellReuseIdentifier: MOVIE_CELL_IDENTIFIER)
+        tableView!.allowsSelection = true
         tableView!.delegate = self
         tableView!.dataSource = self
-        tableView!.backgroundColor = UIColor.lightGray
         self.view.addSubview(tableView!)
+        self.view.addSubview(searchBarView)
     }
 }
 
@@ -35,11 +42,13 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MOVIE_CELL_IDENTIFIER, for: indexPath)
  
-        if(cell.contentView.subviews.count == 1) {
-            cell.contentView.subviews[0].removeFromSuperview()
+        cell.contentView.subviews.forEach { view in
+            view.removeFromSuperview()
         }
+        
         let view = UIHostingController(rootView: MovieTableViewCell(movie: movies![indexPath.row])).view
-        view?.frame = cell.contentView.frame
+        view!.frame = cell.contentView.frame
+        view!.backgroundColor = UIColor.clear
         cell.contentView.addSubview(view!)
         
         return cell
@@ -48,28 +57,20 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("selected")
+        tableView.deselectRow(at: indexPath, animated: true)
+        eventsHandler?.showMovieDetails(id: movies![indexPath.row].id_pk)
+    }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        /*if(Huston.shared.userStatus != .loggedIn) {
-            return nil
-        }*/
+        
         let movie = movies![indexPath.row]
-        let item = UIContextualAction(style: movie.isFavourite ? .destructive : .normal, title: Huston.shared.userStatus == .loggedIn ? (movie.isFavourite ? "Delete" : "Add") : "Log in") {  (contextualAction, view, boolValue) in
+        let item = UIContextualAction(style: movie.isFavourite ? .destructive : .normal, title: Huston.shared.userStatus == .loggedIn ? (movie.isFavourite ? "Delete" : "Add") : "Log in") { [self]  (contextualAction, view, boolValue) in
             boolValue(true)
             
-            if(Huston.shared.userStatus == .loggedIn) {
-                self.view.isUserInteractionEnabled = false
-                Huston.shared.renderStatusView(message: "Updating favourites list")
-                DataManager.shared.switchFavouriteState(id: movie.id_pk, isFavoirte: !movie.isFavourite) { [self] in
-                    DispatchQueue.main.async {
-                        self.view.isUserInteractionEnabled = true
-                        Huston.shared.renderStatusView(message: "Found " + String(self.movies!.count) + " movies")
-                        self.movies = try! Realm().objects(Movie.self)
-                    }
-                }
-            } else {
-                Flow.shared.executeLogin()
-            }
+            eventsHandler?.switchFavouriteStatus(movie: movie)
         }
         let swipeActions = UISwipeActionsConfiguration(actions: [item])
         swipeActions.performsFirstActionWithFullSwipe = false
@@ -77,6 +78,16 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+struct SearchBar : View {
+    @State private var searchText = ""
+    
+    var body: some View {
+        NavigationView {
+            Text("Searching for \(searchText)")
+                .navigationTitle("Searchable Example")
+        }.searchable(text: $searchText)
+    }
+}
 
 struct MovieTableViewCell : View {
     
@@ -100,7 +111,7 @@ struct MovieTableViewCell : View {
                     .padding(.leading)
                     .foregroundColor(.blue)
                 Spacer()
-                Image("a").frame(minWidth: 10, minHeight: 10).background(movie.isFavourite ? .yellow : .black).cornerRadius(5).padding(.trailing)
+                Image(systemName: "heart.fill").frame(minWidth: 20, minHeight: 20).padding(.trailing).foregroundColor(movie.isFavourite ? .yellow : .clear)//.background().padding(.trailing)
             }
             
             Spacer()
@@ -121,4 +132,5 @@ struct MovieTableViewCell : View {
     movie_.originalTitle = "200"
     
     return MovieTableViewCell(movie: movie_)
+    //SearchBar() as! any View
 }
