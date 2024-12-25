@@ -18,13 +18,7 @@ extension LoginModule: LoginModuleViewRenderer {
 }
 
 struct LoginModuleView: View {
-    //@ObservedObject var viewModel: LoginViewModel
     var eventsHandler: LoginModuleEventsHandler
-    
-    /*init(viewModel: LoginViewModel, eventsHandler: LoginModuleEventsHandler) {
-        //self.viewModel = viewModel
-        self.eventsHandler = eventsHandler
-    }*/
     
     var body : some View {
         HStack {

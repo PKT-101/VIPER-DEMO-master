@@ -14,11 +14,10 @@ import UIKit
     static let shared = Flow()
     private var window: UIWindow?
     
-    @MainActor func start(window: UIWindow) {
-        let module = LoginModule().prepareModule()
+    func start(window: UIWindow) {
         self.window = window
         Huston.shared.renderStatusView(message: "Please wait while caching data from sever")
-        (window.rootViewController! as! UINavigationController).viewControllers = [module]
+        setCurrentModule(module: LoginModule().prepareModule())
     }
     
     func execute(delegate: () -> Void) {
@@ -26,12 +25,15 @@ import UIKit
         delegate()
         Huston.shared.operation(inProgress: false)
     }
+    
+    func setCurrentModule(module: Module) {
+        (window!.rootViewController! as! UINavigationController).viewControllers = [module]
+    }
 }
 
 extension Flow: LoginModuleFlow {
     func executeLogin() {
-        let module = WebModule().prepareModule()
-        (window!.rootViewController! as! UINavigationController).viewControllers = [module]
+        setCurrentModule(module: WebModule().prepareModule())
         Huston.shared.renderStatusView(message: "Login in progresss")
     }
     
@@ -52,6 +54,6 @@ extension Flow: WebModuleFlow {
         } else {
             module = LoginModule().prepareModule()
         }
-        (window!.rootViewController! as! UINavigationController).viewControllers = [module!]
+        setCurrentModule(module: module!)
     }
 }

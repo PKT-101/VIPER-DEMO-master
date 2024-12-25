@@ -9,11 +9,13 @@ import SwiftUI
 import RealmSwift
 
 let MOVIE_CELL_IDENTIFIER = "MovieCell"
+
 extension NowPlayingModule: NowPlayingModuleViewRenderer {
     
     func renderView() {
         self.view.backgroundColor = UIColor.white
         self.title = "NOW Playing"
+        
         let uiTableView = UITableView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
         tableView = uiTableView
         tableView!.register(UITableViewCell.self, forCellReuseIdentifier: MOVIE_CELL_IDENTIFIER)
