@@ -50,20 +50,25 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        if(Huston.shared.userStatus != .loggedIn) {
+        /*if(Huston.shared.userStatus != .loggedIn) {
             return nil
-        }
+        }*/
         let movie = movies![indexPath.row]
-        let item = UIContextualAction(style: movie.isFavourite ? .destructive : .normal, title: movie.isFavourite ? "Delete" : "Add") {  (contextualAction, view, boolValue) in
+        let item = UIContextualAction(style: movie.isFavourite ? .destructive : .normal, title: Huston.shared.userStatus == .loggedIn ? (movie.isFavourite ? "Delete" : "Add") : "Log in") {  (contextualAction, view, boolValue) in
             boolValue(true)
-            self.view.isUserInteractionEnabled = false
-            Huston.shared.renderStatusView(message: "Updating favourites list")
-            DataManager.switchFavouriteState(id: movie.id_pk, isFavoirte: !movie.isFavourite) { [self] in
-                DispatchQueue.main.async {
-                    self.view.isUserInteractionEnabled = true
-                    Huston.shared.renderStatusView(message: "Found " + String(self.movies!.count) + " movies")
-                    self.movies = try! Realm().objects(Movie.self)
+            
+            if(Huston.shared.userStatus == .loggedIn) {
+                self.view.isUserInteractionEnabled = false
+                Huston.shared.renderStatusView(message: "Updating favourites list")
+                DataManager.shared.switchFavouriteState(id: movie.id_pk, isFavoirte: !movie.isFavourite) { [self] in
+                    DispatchQueue.main.async {
+                        self.view.isUserInteractionEnabled = true
+                        Huston.shared.renderStatusView(message: "Found " + String(self.movies!.count) + " movies")
+                        self.movies = try! Realm().objects(Movie.self)
+                    }
                 }
+            } else {
+                Flow.shared.executeLogin()
             }
         }
         let swipeActions = UISwipeActionsConfiguration(actions: [item])

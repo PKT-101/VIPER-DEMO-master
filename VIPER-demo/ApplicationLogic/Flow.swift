@@ -9,6 +9,10 @@
 import Foundation
 import UIKit
 
+protocol LoginProtocol {
+    func executeLogin()
+}
+
 @MainActor class Flow {
     
     static let shared = Flow()
@@ -33,8 +37,18 @@ import UIKit
 
 extension Flow: LoginModuleFlow {
     func executeLogin() {
-        setCurrentModule(module: WebModule().prepareModule())
-        Huston.shared.renderStatusView(message: "Login in progresss")
+        Huston.shared.operation(inProgress: true)
+        SessionAPI.getSessionToken { token in
+            if(token != nil) {
+                Flow.shared.execute {
+                    self.setCurrentModule(module: WebModule().prepareModule())
+                    Huston.shared.renderStatusView(message: "Login in progresss")
+                }
+            } else {
+                Huston.shared.operation(inProgress: false)
+            }
+        }
+        
     }
     
     func useAsGuest() {

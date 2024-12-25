@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 protocol LoginModuleFlow { //exit points from module, should be implemented by flow
-    func executeLogin()
     func useAsGuest()
 }
 
@@ -40,7 +39,7 @@ extension LoginModule: LoginModuleEventsHandler {
     
     func prepareData() {
         Huston.shared.operation(inProgress: true)
-        DataManager.fetchData { success in
+        DataManager.shared.fetchData { success in
             DispatchQueue.main.async {
                 Huston.shared.renderStatusView(message: success ? "Login to manage your Favourite movies" : "Nothing to see. Failed to fetch movies")
                 Huston.shared.operation(inProgress: false)
@@ -49,17 +48,7 @@ extension LoginModule: LoginModuleEventsHandler {
     }
     
     func executeLogin() {
-        Huston.shared.operation(inProgress: true)
-        Huston.shared.renderStatusView(message: "Logon in progresss")
-        SessionAPI.getSessionToken { token in
-            if(token != nil) {
-                Flow.shared.execute {
-                    Flow.shared.executeLogin()
-                }
-            } else {
-                Huston.shared.operation(inProgress: false)
-            }
-        }
+        Flow.shared.executeLogin()
     }
     
     func useAsGuest() {

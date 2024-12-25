@@ -10,7 +10,7 @@ import UIKit
 import Realm
 import RealmSwift
 
-protocol NowPlayingModuleFlow { // exit points from module
+protocol NowPlayingModuleFlow: LoginProtocol { // exit points from module
     func showMovieDetails(id: Int)
 }
 
@@ -38,7 +38,7 @@ class NowPlayingModule: Module {
 extension NowPlayingModule: NowPlayingModuleEventsHandler {
     
     func prepareData() {
-        DataManager.fetchFavourites()
+        DataManager.shared.fetchFavourites()
         
         movies = try! Realm().objects(Movie.self)
         Huston.shared.renderStatusView(message: "Found " + String(movies!.count) + " movies")

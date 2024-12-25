@@ -11,7 +11,11 @@ import RealmSwift
 let LAST_FETCH_DATE_KEY = "last_fetch_date_key"
 
 actor DataManagerActor {
-     func appendRecords(newRecords: [Object]) {
+    static let shared = DataManagerActor()
+    
+    private init() {}
+    
+    func appendRecords(newRecords: [Object]) {
         let realm = try! Realm()
         realm.beginWrite()
         realm.add(newRecords, update: .modified)
@@ -33,16 +37,18 @@ actor DataManagerActor {
 }
 
 class DataManager {
-    static let actor = DataManagerActor()
+    static let shared = DataManager()
     
-    static func fetchData(onCompletion: @escaping(Bool) -> Void) {
+    private init() {}
+    
+    func fetchData(onCompletion: @escaping(Bool) -> Void) {
         let lastFetchDate: Date = UserDefaults.standard.value(forKey: LAST_FETCH_DATE_KEY) as? Date ?? Date(timeIntervalSince1970: 0)
         if(lastFetchDate.timeIntervalSince1970 == 0) {
             MoviesListAPI.fetchGenres { genres in
                 Task {
-                    await actor.appendRecords(newRecords: genres!)
+                    await DataManagerActor.shared.appendRecords(newRecords: genres!)
                     print("Gneres ready")
-                    await actor.appendRecords(newRecords: MoviesListAPI.fetchMovies(favourities: false)!)
+                    await DataManagerActor.shared.appendRecords(newRecords: MoviesListAPI.fetchMovies(favourities: false)!)
                     print("Movies ready")
                     UserDefaults.standard.setValue(Date(), forKey: LAST_FETCH_DATE_KEY)
                     onCompletion(true)
@@ -53,23 +59,20 @@ class DataManager {
         }
     }
     
-    static func fetchFavourites() {
+    func fetchFavourites() {
         if(Huston.shared.userStatus == .loggedIn) {
             Task {
-                await actor.updateFavouriteMovies(favouriteMovies: MoviesListAPI.fetchMovies(favourities: true)!)
+                await DataManagerActor.shared.updateFavouriteMovies(favouriteMovies: MoviesListAPI.fetchMovies(favourities: true)!)
                 print("Favs ready")
             }
         }  else if(Huston.shared.userStatus == .guest){
             Task {
-                await actor.updateFavouriteMovies(favouriteMovies:[])
+                await DataManagerActor.shared.updateFavouriteMovies(favouriteMovies:[])
             }
         }
     }
     
-    static func clearFavourites() {
-        
-    }
-    static func switchFavouriteState(id: Int, isFavoirte: Bool, onCompletion: @escaping() -> Void) {
+    func switchFavouriteState(id: Int, isFavoirte: Bool, onCompletion: @escaping() -> Void) {
         if(Huston.shared.userStatus == .loggedIn) {
             FavouritesAPI.updateFavouritesList(id: id, isFavourite: isFavoirte) { result in
                 let realm = try! Realm()
@@ -78,7 +81,7 @@ class DataManager {
                 movie!.isFavourite = !movie!.isFavourite
                 try! realm.commitWrite()
                 Task {
-                    await actor.updateFavouriteMovies(favouriteMovies: MoviesListAPI.fetchMovies(favourities: true)!)
+                    await DataManagerActor.shared.updateFavouriteMovies(favouriteMovies: MoviesListAPI.fetchMovies(favourities: true)!)
                     onCompletion()
                 }
             }
