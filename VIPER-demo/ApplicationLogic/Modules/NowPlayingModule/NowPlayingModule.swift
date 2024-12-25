@@ -33,13 +33,6 @@ class NowPlayingModule: Module {
         eventsHandler?.prepareData()
         return self
     }
-
-    override func returnToForeground() {
-        print("oken")
-        SessionAPI.getSession { result in
-            Flow.shared.loginStatus(success: result)
-        }
-    }
 }
 
 extension NowPlayingModule: NowPlayingModuleEventsHandler {
@@ -48,6 +41,6 @@ extension NowPlayingModule: NowPlayingModuleEventsHandler {
         DataManager.fetchFavourites()
         
         movies = try! Realm().objects(Movie.self)
-        Flow.shared.renderStatusView(message: "Found " + String(movies!.count) + " movies")
+        Huston.shared.renderStatusView(message: "Found " + String(movies!.count) + " movies")
     }
 }

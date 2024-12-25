@@ -13,19 +13,8 @@ protocol LoginModuleFlow { //exit points from module, should be implemented by f
     func useAsGuest()
 }
 
-protocol LoginModuleInterface {
-    func initialCacheCompleted()
-}
 
-class LoginViewModel: ObservableObject {
-    @Published var buttonsDisbled: Bool
-    
-    init() {
-        buttonsDisbled = true
-    }
-}
-
-protocol LoginModuleEventsHandler { //user driven/external events handling
+protocol LoginModuleEventsHandler: ModuleEventsHandler { //user driven/external events handling
     func executeLogin()
     func useAsGuest()
 }
@@ -36,43 +25,44 @@ class LoginModule: Module {
     
     internal var viewRenderer: LoginModuleViewRenderer?
     internal var eventsHandler: LoginModuleEventsHandler?
-    internal var viewModel: LoginViewModel?
     
     override func prepareModule() -> Module {
         eventsHandler = self
         viewRenderer = self
-        viewModel = LoginViewModel()
         viewRenderer?.renderView()
         
+        eventsHandler!.prepareData()
         return self
-    }
-    
-    override func returnToForeground() {
-        print("oken")
-        SessionAPI.getSession { result in
-            
-            print("User " + (result ? "logged in" : "rejected"))
-        }
     }
 }
 
 extension LoginModule: LoginModuleEventsHandler {
     
+    func prepareData() {
+        Huston.shared.operation(inProgress: true)
+        DataManager.fetchData { success in
+            DispatchQueue.main.async {
+                Huston.shared.renderStatusView(message: success ? "Login to manage your Favourite movies" : "Nothing to see. Failed to fetch movies")
+                Huston.shared.operation(inProgress: false)
+            }
+        }
+    }
+    
     func executeLogin() {
-        viewModel?.buttonsDisbled = true
-        Flow.shared.renderStatusView(message: "Logon in progresss")
+        Huston.shared.operation(inProgress: true)
+        Huston.shared.renderStatusView(message: "Logon in progresss")
         SessionAPI.getSessionToken { token in
-            Flow.shared.executeLogin()
+            if(token != nil) {
+                Flow.shared.execute {
+                    Flow.shared.executeLogin()
+                }
+            } else {
+                Huston.shared.operation(inProgress: false)
+            }
         }
     }
     
     func useAsGuest() {
         Flow.shared.useAsGuest()
-    }
-}
-
-extension LoginModule: LoginModuleInterface {
-    func initialCacheCompleted() {
-        viewModel?.buttonsDisbled = false
     }
 }

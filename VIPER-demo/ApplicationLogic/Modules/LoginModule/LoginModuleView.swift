@@ -11,20 +11,20 @@ import SwiftUI
 extension LoginModule: LoginModuleViewRenderer {
     
     func renderView() {
-        let view = UIHostingController(rootView: LoginModuleView(viewModel: viewModel!, eventsHandler: self.eventsHandler!)).view
+        let view = UIHostingController(rootView: LoginModuleView(eventsHandler: self.eventsHandler!)).view
         view?.frame = UIScreen.main.bounds
         self.view.addSubview(view!)
     }
 }
 
 struct LoginModuleView: View {
-    @ObservedObject var viewModel: LoginViewModel
+    //@ObservedObject var viewModel: LoginViewModel
     var eventsHandler: LoginModuleEventsHandler
     
-    init(viewModel: LoginViewModel, eventsHandler: LoginModuleEventsHandler) {
-        self.viewModel = viewModel
+    /*init(viewModel: LoginViewModel, eventsHandler: LoginModuleEventsHandler) {
+        //self.viewModel = viewModel
         self.eventsHandler = eventsHandler
-    }
+    }*/
     
     var body : some View {
         HStack {
@@ -49,9 +49,9 @@ struct LoginModuleView: View {
                             .foregroundColor(.red)
                             .padding(.vertical, 10)
                             .frame(minWidth: 150)
-                            .background(!viewModel.buttonsDisbled ? .white : .gray)
+                            .background(.white)
                             .cornerRadius(8)
-                    }.disabled(viewModel.buttonsDisbled)
+                    }
                     Spacer()
                     Button {
                         eventsHandler.useAsGuest()
@@ -60,9 +60,9 @@ struct LoginModuleView: View {
                             .foregroundColor(.red)
                             .padding(.vertical, 10)
                             .frame(minWidth: 150)
-                            .background(!viewModel.buttonsDisbled ? .white : .gray)
+                            .background(.white)
                             .cornerRadius(8)
-                    }.disabled(viewModel.buttonsDisbled)
+                    }
                     Spacer()
                 }
                 Spacer().frame(height: 150)
@@ -81,5 +81,5 @@ struct LoginModuleView: View {
 #Preview {
     //let loginViewModel =
     //loginViewModel.buttonsDisbled = true
-    LoginModuleView(viewModel: LoginViewModel(), eventsHandler: LoginModule())
+    LoginModuleView(eventsHandler: LoginModule())
 }

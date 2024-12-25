@@ -13,7 +13,7 @@ extension NowPlayingModule: NowPlayingModuleViewRenderer {
     
     func renderView() {
         self.view.backgroundColor = UIColor.white
-        
+        self.title = "NOW Playing"
         let uiTableView = UITableView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
         tableView = uiTableView
         tableView!.register(UITableViewCell.self, forCellReuseIdentifier: MOVIE_CELL_IDENTIFIER)
@@ -27,7 +27,7 @@ extension NowPlayingModule: NowPlayingModuleViewRenderer {
 extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movies!.count// 0//arrayList.count
+        return movies!.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -36,7 +36,7 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
         if(cell.contentView.subviews.count == 1) {
             cell.contentView.subviews[0].removeFromSuperview()
         }
-        let view = UIHostingController(rootView: MovieTableViewCell(movie_: movies![indexPath.row])).view
+        let view = UIHostingController(rootView: MovieTableViewCell(movie: movies![indexPath.row])).view
         view?.frame = cell.contentView.frame
         cell.contentView.addSubview(view!)
         
@@ -53,14 +53,13 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
         }
         let movie = movies![indexPath.row]
         let item = UIContextualAction(style: movie.isFavourite ? .destructive : .normal, title: movie.isFavourite ? "Delete" : "Add") {  (contextualAction, view, boolValue) in
-            //Write your code in here
             boolValue(true)
             self.view.isUserInteractionEnabled = false
-            Flow.shared.renderStatusView(message: "Updating favourites list")
+            Huston.shared.renderStatusView(message: "Updating favourites list")
             DataManager.switchFavouriteState(id: movie.id_pk, isFavoirte: !movie.isFavourite) { [self] in
                 DispatchQueue.main.async {
                     self.view.isUserInteractionEnabled = true
-                    Flow.shared.renderStatusView(message: "Found " + String(self.movies!.count) + " movies")
+                    Huston.shared.renderStatusView(message: "Found " + String(self.movies!.count) + " movies")
                     self.movies = try! Realm().objects(Movie.self)
                 }
             }
@@ -76,8 +75,8 @@ struct MovieTableViewCell : View {
     
     @ObservedRealmObject var movie: Movie
     
-    init(movie_: Movie) {
-        movie = movie_
+    init(movie: Movie) {
+        self.movie = movie
     }
     
     var body: some View {
@@ -107,6 +106,12 @@ struct MovieTableViewCell : View {
     }
 }
 
-/*#Preview {
-    MovieTableViewCell(movie: try! Realm().objects(Movie.self).first)
-}*/
+
+#Preview {
+    var movie_ = Movie()
+    movie_.isFavourite = false
+    movie_.title = "20"
+    movie_.originalTitle = "200"
+    
+    return MovieTableViewCell(movie: movie_)
+}

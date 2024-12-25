@@ -10,11 +10,10 @@
 		D4D61A2D20E611B10087F31F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D61A2C20E611B10087F31F /* AppDelegate.swift */; };
 		D4D61A3420E611B20087F31F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D4D61A3320E611B20087F31F /* Assets.xcassets */; };
 		D4D61A3720E611B20087F31F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D4D61A3520E611B20087F31F /* LaunchScreen.storyboard */; };
-		D4D61A5020E619530087F31F /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D61A4F20E619530087F31F /* AppConstants.swift */; };
 		D4E6799220EB418500D8700F /* ProgressIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E6799120EB418500D8700F /* ProgressIndicator.swift */; };
-		D4E6799420EB41F300D8700F /* AppUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E6799320EB41F300D8700F /* AppUtils.swift */; };
 		EF70D7F52D16E72E004B5E65 /* NowPlayingModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF70D7F42D16E72E004B5E65 /* NowPlayingModuleView.swift */; };
 		EF70D7F72D16E73E004B5E65 /* NowPlayingModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF70D7F62D16E73E004B5E65 /* NowPlayingModule.swift */; };
+		EF70D7FA2D1BD444004B5E65 /* Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF70D7F92D1BD444004B5E65 /* Flow.swift */; };
 		EFB3D8C42D14AED500E97D3A /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB3D8C32D14AED500E97D3A /* Movie.swift */; };
 		EFB3D8C62D14B00200E97D3A /* Genre.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB3D8C52D14B00200E97D3A /* Genre.swift */; };
 		EFB3D8C82D14D2B700E97D3A /* MoviesListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB3D8C72D14D2B700E97D3A /* MoviesListAPI.swift */; };
@@ -42,11 +41,10 @@
 		D4D61A3320E611B20087F31F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D4D61A3620E611B20087F31F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D4D61A3820E611B20087F31F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D4D61A4F20E619530087F31F /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		D4E6799120EB418500D8700F /* ProgressIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressIndicator.swift; sourceTree = "<group>"; };
-		D4E6799320EB41F300D8700F /* AppUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUtils.swift; sourceTree = "<group>"; };
 		EF70D7F42D16E72E004B5E65 /* NowPlayingModuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingModuleView.swift; sourceTree = "<group>"; };
 		EF70D7F62D16E73E004B5E65 /* NowPlayingModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingModule.swift; sourceTree = "<group>"; };
+		EF70D7F92D1BD444004B5E65 /* Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flow.swift; sourceTree = "<group>"; };
 		EFB3D8C32D14AED500E97D3A /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
 		EFB3D8C52D14B00200E97D3A /* Genre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genre.swift; sourceTree = "<group>"; };
 		EFB3D8C72D14D2B700E97D3A /* MoviesListAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesListAPI.swift; sourceTree = "<group>"; };
@@ -84,14 +82,12 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		D4A0F17320EA22470088F11B /* common-utils */ = {
+		D4A0F17320EA22470088F11B /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				D4E6799320EB41F300D8700F /* AppUtils.swift */,
-				D4E6799020EB416F00D8700F /* ui-utils */,
-				D4E6798F20EB415D00D8700F /* app-constants */,
+				D4E6799020EB416F00D8700F /* UI */,
 			);
-			path = "common-utils";
+			path = Common;
 			sourceTree = "<group>";
 		};
 		D4D61A2020E611B10087F31F = {
@@ -116,14 +112,11 @@
 			isa = PBXGroup;
 			children = (
 				D4D61A3820E611B20087F31F /* Info.plist */,
+				EF70D7F82D1BD30B004B5E65 /* Resources */,
 				EFB3D8D92D15FBE400E97D3A /* ApplicationLogic */,
 				EFB3D8C22D14ACD200E97D3A /* Data */,
 				EFB3D8C12D14ACB400E97D3A /* Network */,
-				D4D61A4620E6136C0087F31F /* Modules */,
-				D4D61A4920E614020087F31F /* app-icons */,
-				D4D61A4820E613D40087F31F /* views */,
-				D4D61A4720E6138E0087F31F /* app-settings */,
-				D4A0F17320EA22470088F11B /* common-utils */,
+				D4A0F17320EA22470088F11B /* Common */,
 			);
 			path = "VIPER-demo";
 			sourceTree = "<group>";
@@ -139,46 +132,14 @@
 			path = Modules;
 			sourceTree = "<group>";
 		};
-		D4D61A4720E6138E0087F31F /* app-settings */ = {
-			isa = PBXGroup;
-			children = (
-				D4D61A2C20E611B10087F31F /* AppDelegate.swift */,
-			);
-			path = "app-settings";
-			sourceTree = "<group>";
-		};
-		D4D61A4820E613D40087F31F /* views */ = {
-			isa = PBXGroup;
-			children = (
-				D4D61A3520E611B20087F31F /* LaunchScreen.storyboard */,
-			);
-			path = views;
-			sourceTree = "<group>";
-		};
-		D4D61A4920E614020087F31F /* app-icons */ = {
-			isa = PBXGroup;
-			children = (
-				D4D61A3320E611B20087F31F /* Assets.xcassets */,
-			);
-			path = "app-icons";
-			sourceTree = "<group>";
-		};
-		D4E6798F20EB415D00D8700F /* app-constants */ = {
-			isa = PBXGroup;
-			children = (
-				D4D61A4F20E619530087F31F /* AppConstants.swift */,
-			);
-			path = "app-constants";
-			sourceTree = "<group>";
-		};
-		D4E6799020EB416F00D8700F /* ui-utils */ = {
+		D4E6799020EB416F00D8700F /* UI */ = {
 			isa = PBXGroup;
 			children = (
 				EFB3D8C92D14FC8700E97D3A /* StatusView.swift */,
 				D4E6799120EB418500D8700F /* ProgressIndicator.swift */,
 				EFB3D8D72D15E50C00E97D3A /* ModifiersAndViewExtensions.swift */,
 			);
-			path = "ui-utils";
+			path = UI;
 			sourceTree = "<group>";
 		};
 		DFCA8B60E1BA92EAEDB53958 /* Pods */ = {
@@ -197,6 +158,15 @@
 				EF70D7F62D16E73E004B5E65 /* NowPlayingModule.swift */,
 			);
 			path = NowPlayingModule;
+			sourceTree = "<group>";
+		};
+		EF70D7F82D1BD30B004B5E65 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D4D61A3320E611B20087F31F /* Assets.xcassets */,
+				D4D61A3520E611B20087F31F /* LaunchScreen.storyboard */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		EFB3D8C12D14ACB400E97D3A /* Network */ = {
@@ -247,7 +217,10 @@
 		EFB3D8D92D15FBE400E97D3A /* ApplicationLogic */ = {
 			isa = PBXGroup;
 			children = (
+				D4D61A4620E6136C0087F31F /* Modules */,
+				D4D61A2C20E611B10087F31F /* AppDelegate.swift */,
 				EFB3D8DA2D15FC0000E97D3A /* Huston.swift */,
+				EF70D7F92D1BD444004B5E65 /* Flow.swift */,
 			);
 			path = ApplicationLogic;
 			sourceTree = "<group>";
@@ -381,6 +354,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EFB3D8D52D154BFA00E97D3A /* DataManager.swift in Sources */,
+				EF70D7FA2D1BD444004B5E65 /* Flow.swift in Sources */,
 				EFB3D8E02D16208700E97D3A /* LoginModule.swift in Sources */,
 				EFB3D8E52D169A1100E97D3A /* WebModule.swift in Sources */,
 				EFB3D8D82D15E50C00E97D3A /* ModifiersAndViewExtensions.swift in Sources */,
@@ -392,11 +366,9 @@
 				EFB3D8C82D14D2B700E97D3A /* MoviesListAPI.swift in Sources */,
 				EFB3D8DE2D16083500E97D3A /* LoginModuleView.swift in Sources */,
 				EFB3D8E32D1699F700E97D3A /* WebModuleView.swift in Sources */,
-				D4D61A5020E619530087F31F /* AppConstants.swift in Sources */,
 				EFB3D8E72D169B7300E97D3A /* Module.swift in Sources */,
 				EFB3D8D02D1546C800E97D3A /* APIConstatns.swift in Sources */,
 				EF70D7F72D16E73E004B5E65 /* NowPlayingModule.swift in Sources */,
-				D4E6799420EB41F300D8700F /* AppUtils.swift in Sources */,
 				D4E6799220EB418500D8700F /* ProgressIndicator.swift in Sources */,
 				D4D61A2D20E611B10087F31F /* AppDelegate.swift in Sources */,
 				EF70D7F52D16E72E004B5E65 /* NowPlayingModuleView.swift in Sources */,
