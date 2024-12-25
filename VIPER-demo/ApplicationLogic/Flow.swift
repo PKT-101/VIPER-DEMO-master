@@ -40,6 +40,7 @@ extension Flow: LoginModuleFlow {
     func useAsGuest() {
         print("Flow guest")
         Huston.shared.guestAccepted()
+        setCurrentModule(module: NowPlayingModule().prepareModule())
         Huston.shared.renderStatusView(message: "No access to your Favourite movies")
     }
 }
@@ -50,7 +51,6 @@ extension Flow: WebModuleFlow {
         if(success) {
             Huston.shared.userLoggedIn()
             module = NowPlayingModule().prepareModule()
-
         } else {
             module = LoginModule().prepareModule()
         }
