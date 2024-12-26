@@ -7,6 +7,22 @@
 
 import UIKit
 
+protocol ModuleLifecycle {
+    func prepareModule() -> Module?
+    func returnToForeground()
+    func refreshModule()
+}
+
+protocol ModuleView {
+    func renderView()
+}
+
+protocol ModuleEventsHandler {
+    func prepareData()
+    func refreshData()
+    func pop()
+}
+
 class Module: UIViewController, ModuleLifecycle {
     
     weak var tableView: UITableView?
@@ -23,18 +39,4 @@ class Module: UIViewController, ModuleLifecycle {
     
 }
 
-protocol ModuleLifecycle {
-    func prepareModule() -> Module?
-    func returnToForeground()
-    func refreshModule()
-}
 
-protocol ModuleView {
-    func renderView()
-}
-
-protocol ModuleEventsHandler {
-    func prepareData()
-    func refreshData()
-    func pop()
-}

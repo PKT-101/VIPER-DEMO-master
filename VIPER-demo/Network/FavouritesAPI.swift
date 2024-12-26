@@ -24,7 +24,6 @@ class FavouritesAPI {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
     
         let parameters = ["media_type": "movie", "media_id": id, "favorite": isFavourite] as [String : Any]
-        let postData = try! JSONSerialization.data(withJSONObject: parameters, options: [])
         
         AF.request(components.url!, method: HTTPMethod.post, parameters: parameters, encoding: JSONEncoding.default, headers: AUTHORIZATION_HEADERS).responseJSON { response in
             if((response.response!.statusCode >= 200) && (response.response!.statusCode < 300)) {

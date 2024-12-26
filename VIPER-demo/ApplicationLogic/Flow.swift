@@ -46,6 +46,7 @@ extension Flow: LoginModuleFlow {
     func executeLogin() {
         previousModule = ((window!.rootViewController! as! UINavigationController).viewControllers.last as! Module)
         Huston.shared.operation(inProgress: true)
+        Huston.shared.renderStatusView(message: "Requesting session token")
         SessionAPI.getSessionToken { token in
             if(token != nil) {
                 Flow.shared.execute {
@@ -54,6 +55,7 @@ extension Flow: LoginModuleFlow {
                 }
             } else {
                 Huston.shared.operation(inProgress: false)
+                Huston.shared.renderStatusView(message: "Login to manage your favourite movies")
             }
         }
     }

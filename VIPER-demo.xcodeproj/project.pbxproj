@@ -129,10 +129,10 @@
 			isa = PBXGroup;
 			children = (
 				EFB3D8E62D169B7300E97D3A /* Module.swift */,
-				EFA9E2CD2D1C6B80001BB901 /* MovieDetailsModule */,
-				EF70D7F32D16E6AE004B5E65 /* NowPlayingModule */,
-				EFB3D8E12D1699AA00E97D3A /* WebModule */,
 				EFB3D8DC2D16081900E97D3A /* LoginModule */,
+				EFB3D8E12D1699AA00E97D3A /* WebModule */,
+				EF70D7F32D16E6AE004B5E65 /* NowPlayingModule */,
+				EFA9E2CD2D1C6B80001BB901 /* MovieDetailsModule */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -198,7 +198,6 @@
 			isa = PBXGroup;
 			children = (
 				EFB3D8D32D154B7900E97D3A /* DataManagement */,
-				EFB3D8D22D154B6400E97D3A /* DAO */,
 				EFB3D8D12D154B4600E97D3A /* Model */,
 			);
 			path = Data;
@@ -211,13 +210,6 @@
 				EFB3D8C52D14B00200E97D3A /* Genre.swift */,
 			);
 			path = Model;
-			sourceTree = "<group>";
-		};
-		EFB3D8D22D154B6400E97D3A /* DAO */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = DAO;
 			sourceTree = "<group>";
 		};
 		EFB3D8D32D154B7900E97D3A /* DataManagement */ = {
