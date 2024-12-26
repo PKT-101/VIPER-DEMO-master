@@ -28,10 +28,13 @@ class LoginModule: Module {
     override func prepareModule() -> Module {
         eventsHandler = self
         viewRenderer = self
-        viewRenderer?.renderView()
-        
         eventsHandler!.prepareData()
+        viewRenderer?.renderView()
         return self
+    }
+    
+    override func refreshModule() {
+        prepareData()
     }
 }
 

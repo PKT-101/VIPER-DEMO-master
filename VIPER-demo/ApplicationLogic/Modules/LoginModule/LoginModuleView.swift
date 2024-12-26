@@ -73,7 +73,5 @@ struct LoginModuleView: View {
 }
 
 #Preview {
-    //let loginViewModel =
-    //loginViewModel.buttonsDisbled = true
     LoginModuleView(eventsHandler: LoginModule())
 }

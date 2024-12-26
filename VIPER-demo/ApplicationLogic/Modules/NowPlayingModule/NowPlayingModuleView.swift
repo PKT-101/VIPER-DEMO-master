@@ -15,6 +15,8 @@ extension NowPlayingModule: NowPlayingModuleViewRenderer, UISearchBarDelegate {
     func renderView() {
         self.navigationItem.setHidesBackButton(true, animated: false)
         
+        setLoginButton()
+        
         self.view.backgroundColor = UIColor.white
         self.title = "NOW Playing"
         
@@ -32,6 +34,18 @@ extension NowPlayingModule: NowPlayingModuleViewRenderer, UISearchBarDelegate {
         tableView!.dataSource = self
         self.view.addSubview(tableView!)
         self.view.addSubview(searchBarView)
+    }
+    
+    func setLoginButton() {
+        let loginButton = UIBarButtonItem(image: UIImage(systemName: (Huston.shared.userStatus == .guest) ? "person.fill.questionmark" : "person.fill"), style: UIBarButtonItem.Style.bordered, target: self, action: (Huston.shared.userStatus == .guest) ? #selector(login(sender:)) : nil)
+        loginButton.width = 20
+        loginButton.tintColor = UIColor.systemRed
+        
+        self.navigationItem.rightBarButtonItem = loginButton
+    }
+    
+    @objc func login(sender: UIBarButtonItem) {
+        eventsHandler!.executeLogin()
     }
 }
 
@@ -68,8 +82,12 @@ extension NowPlayingModule: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
+        if (Huston.shared.userStatus == .guest) {
+            return nil
+        }
+        
         let movie = filteredMovies![indexPath.row]
-        let item = UIContextualAction(style: movie.isFavourite ? .destructive : .normal, title: Huston.shared.userStatus == .loggedIn ? (movie.isFavourite ? "Delete" : "Add") : "Log in") { [self]  (contextualAction, view, boolValue) in
+        let item = UIContextualAction(style: movie.isFavourite ? .destructive : .normal, title: (movie.isFavourite ? "Delete" : "Add")) { [self]  (contextualAction, view, boolValue) in
             boolValue(true)
             
             eventsHandler?.switchFavouriteStatus(movie: movie)

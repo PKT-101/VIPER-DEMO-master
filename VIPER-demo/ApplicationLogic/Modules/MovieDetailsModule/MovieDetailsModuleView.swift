@@ -25,7 +25,7 @@ extension MovieDetailsModule: MovieDetailsModuleViewRenderer {
         self.navigationItem.leftBarButtonItem = newBackButton
             
         self.view.backgroundColor = UIColor.systemBackground
-        self.title = "Movie Details"
+        self.title = movie!.title
         
         var imageView = UIImageView(frame: CGRect(x: 0, y: 96, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - 96 - 50))
         imageView.contentMode = .scaleAspectFit

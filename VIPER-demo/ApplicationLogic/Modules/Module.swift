@@ -15,6 +15,8 @@ class Module: UIViewController, ModuleLifecycle {
         exit(-1) // make sure that you do not forget to implement method in module :)
     }
     
+    func refreshModule() {}
+    
     func returnToForeground() { //application returned to foreground
         //optional method
     }
@@ -24,6 +26,7 @@ class Module: UIViewController, ModuleLifecycle {
 protocol ModuleLifecycle {
     func prepareModule() -> Module?
     func returnToForeground()
+    func refreshModule()
 }
 
 protocol ModuleView {

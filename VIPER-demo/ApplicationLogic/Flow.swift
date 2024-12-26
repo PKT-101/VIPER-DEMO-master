@@ -61,7 +61,6 @@ extension Flow: LoginModuleFlow {
     func useAsGuest() {
         Huston.shared.guestAccepted()
         setCurrentModule(module: NowPlayingModule().prepareModule())
-        Huston.shared.renderStatusView(message: "No access to your Favourite movies")
     }
 }
 
@@ -75,8 +74,10 @@ extension Flow: WebModuleFlow {
                 let loginModule = (window!.rootViewController! as! UINavigationController).viewControllers.last
                 (window!.rootViewController! as! UINavigationController).setViewControllers([module!, loginModule!], animated: false)
             } else {
-                (module! as! ModuleEventsHandler).refreshData()
+                module!.refreshModule()
             }
+        } else {
+            module!.refreshModule()
         }
         (window!.rootViewController! as! UINavigationController).popViewController(animated: true)
     }
@@ -84,9 +85,7 @@ extension Flow: WebModuleFlow {
 
 extension Flow: NowPlayingModuleFlow {
     func showMovieDetails(id: Int) {
-        let module = MovieDetailsModule()
-        module.setMovie(id: id)
-        setCurrentModule(module: module.prepareModule())
+        setCurrentModule(module: MovieDetailsModule(id: id).prepareModule())
     }
 }
 
