@@ -8,7 +8,7 @@
 import UIKit
 import SwiftUI
 
-extension LoginModule: LoginModuleViewRenderer {
+extension LoginModule {
     
     func renderView() {
         let view = UIHostingController(rootView: LoginModuleView(eventsHandler: self.eventsHandler!)).view

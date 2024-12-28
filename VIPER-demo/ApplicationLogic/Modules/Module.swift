@@ -23,6 +23,19 @@ protocol ModuleEventsHandler {
     func pop()
 }
 
+enum CheckPoint {
+    case LoginEntryPoint
+}
+
+class ModuleContext {
+    var moduleMode: Any?
+    var flow: Flow?
+    var checkPoint: CheckPoint?
+    
+    var completionBlock: (() -> (Void))?
+    var popCompletionBlock: (() -> (Void))?
+}
+
 class Module: UIViewController, ModuleLifecycle {
     
     weak var tableView: UITableView?

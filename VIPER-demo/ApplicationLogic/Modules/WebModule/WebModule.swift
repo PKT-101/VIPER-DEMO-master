@@ -14,15 +14,15 @@ protocol WebModuleFlow { // exit points from module
 }
 
 
-protocol WebModuleEventsHandler {
+protocol WebModuleEventsHandler: AnyObject {
     func userLoggedIn()
 }
 
-protocol WebModuleViewRenderer: ModuleView {}
+protocol WebModuleViewRenderer: AnyObject, ModuleView {}
 
 class WebModule: Module {
-    internal var viewRenderer: WebModuleViewRenderer?
-    internal var eventsHandler: WebModuleEventsHandler?
+    internal weak var viewRenderer: WebModuleViewRenderer?
+    internal weak var eventsHandler: WebModuleEventsHandler?
 
     override func prepareModule() -> Module {
         eventsHandler = self

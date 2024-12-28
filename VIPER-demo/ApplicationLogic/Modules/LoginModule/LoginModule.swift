@@ -13,17 +13,17 @@ protocol LoginModuleFlow: LoginFlowProtocol { //exit points from module, should 
 }
 
 
-protocol LoginModuleEventsHandler: ModuleEventsHandler { //user driven/external events handling
+protocol LoginModuleEventsHandler: AnyObject, ModuleEventsHandler { //user driven/external events handling
     func executeLogin()
     func useAsGuest()
 }
 
-protocol LoginModuleViewRenderer: ModuleView {} //request to render view for user
+protocol LoginModuleViewRenderer: AnyObject, ModuleView {} //request to render view for user
 
-class LoginModule: Module {
+class LoginModule: Module, LoginModuleViewRenderer {
     
-    internal var viewRenderer: LoginModuleViewRenderer?
-    internal var eventsHandler: LoginModuleEventsHandler?
+    internal weak var viewRenderer: LoginModuleViewRenderer?
+    internal weak var eventsHandler: LoginModuleEventsHandler?
     
     override func prepareModule() -> Module {
         eventsHandler = self

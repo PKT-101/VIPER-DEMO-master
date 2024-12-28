@@ -23,16 +23,21 @@ protocol LoginFlowProtocol {
     private var window: UIWindow?
     private var previousModule: Module?
     
+    var dtoDictionary: Dictionary<DTO, Any?>?
+    
     func start(window: UIWindow) {
         self.window = window
         Huston.shared.renderStatusView(message: "Please wait while caching data from sever")
         setCurrentModule(module: LoginModule().prepareModule())
+        dtoDictionary = Dictionary()
     }
     
-    func execute(delegate: () -> Void) {
+    func execute(delegate: @escaping () -> Void) {
         Huston.shared.operation(inProgress: true)
-        delegate()
-        Huston.shared.operation(inProgress: false)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            delegate()
+            Huston.shared.operation(inProgress: false)
+        }
     }
     
     func setCurrentModule(module: Module) {
@@ -86,8 +91,8 @@ extension Flow: WebModuleFlow {
 }
 
 extension Flow: NowPlayingModuleFlow {
-    func showMovieDetails(id: Int) {
-        setCurrentModule(module: MovieDetailsModule(id: id).prepareModule())
+    func showMovieDetails() {
+        setCurrentModule(module: MovieDetailsModule().prepareModule())
     }
 }
 

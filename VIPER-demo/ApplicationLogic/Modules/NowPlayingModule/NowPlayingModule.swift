@@ -11,23 +11,23 @@ import Realm
 import RealmSwift
 
 protocol NowPlayingModuleFlow: LoginFlowProtocol { // exit points from module
-    func showMovieDetails(id: Int)
+    func showMovieDetails()
 }
 
 
-protocol NowPlayingModuleEventsHandler: ModuleEventsHandler {
+protocol NowPlayingModuleEventsHandler: AnyObject, ModuleEventsHandler {
     func executeLogin()
     func switchFavouriteStatus(movie: Movie)
     func showMovieDetails(id: Int)
 }
 
-protocol NowPlayingModuleViewRenderer: ModuleView {
+protocol NowPlayingModuleViewRenderer: AnyObject, ModuleView {
     func setLoginButton()
 }
 
 class NowPlayingModule: Module {
-    internal var viewRenderer: NowPlayingModuleViewRenderer?
-    internal var eventsHandler: NowPlayingModuleEventsHandler?
+    internal weak var viewRenderer: NowPlayingModuleViewRenderer?
+    internal weak var eventsHandler: NowPlayingModuleEventsHandler?
 
     var movies: Results<Movie>?
     var filteredMovies: Results<Movie>?
@@ -77,11 +77,16 @@ extension NowPlayingModule: NowPlayingModuleEventsHandler {
     func pop() {}
     
     func executeLogin() {
-        Flow.shared.executeLogin()
+        Flow.shared.execute {
+            Flow.shared.executeLogin()
+        }
     }
     
     func showMovieDetails(id: Int) {
-        Flow.shared.showMovieDetails(id: id)
+        Flow.shared.dtoDictionary!.updateValue(id, forKey: DTO.DTO_MOVIE_ID)
+        Flow.shared.execute {
+            Flow.shared.showMovieDetails()
+        }
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

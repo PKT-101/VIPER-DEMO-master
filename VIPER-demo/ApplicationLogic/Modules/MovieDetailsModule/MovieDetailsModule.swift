@@ -10,28 +10,17 @@ import Foundation
 import Realm
 import RealmSwift
 
-protocol MovieDetailsModuleEventsHandler: ModuleEventsHandler {
-    func executeLogin()
+protocol MovieDetailsModuleEventsHandler: AnyObject, ModuleEventsHandler {
 }
 
-protocol MovieDetailsModuleViewRenderer: ModuleView {}
+protocol MovieDetailsModuleViewRenderer: AnyObject, ModuleView {}
 
 class MovieDetailsModule: Module {
     
-    var id: Int?
     var movie: Movie?
     
-    init(id: Int) {
-        self.id = id
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    @available(*, unavailable) required init?(coder: NSCoder) {
-        fatalError("This class does not support NSCoder")
-    }
-    
-    internal var viewRenderer: MovieDetailsModuleViewRenderer?
-    internal var eventsHandler: MovieDetailsModuleEventsHandler?
+    internal weak var viewRenderer: MovieDetailsModuleViewRenderer?
+    internal weak var eventsHandler: MovieDetailsModuleEventsHandler?
     
     override func prepareModule() -> Module {
         eventsHandler = self
@@ -40,20 +29,15 @@ class MovieDetailsModule: Module {
         viewRenderer?.renderView()
         return self
     }
-    
 }
 
 extension MovieDetailsModule: MovieDetailsModuleEventsHandler {
     
     func prepareData() {
-        movie = try! Realm().object(ofType: Movie.self, forPrimaryKey: id)
+        movie = try! Realm().object(ofType: Movie.self, forPrimaryKey: Flow.shared.dtoDictionary![DTO.DTO_MOVIE_ID])
     }
     
     func refreshData() {}
-    
-    func executeLogin() {
-        Flow.shared.executeLogin()
-    }
     
     func pop() {
         Flow.shared.pop()
