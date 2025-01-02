@@ -27,7 +27,6 @@ protocol LoginFlowProtocol {
     
     func start(window: UIWindow) {
         self.window = window
-        Huston.shared.renderStatusView(message: "Please wait while caching data from sever")
         setCurrentModule(module: LoginModule().prepareModule())
         dtoDictionary = Dictionary()
     }
@@ -52,7 +51,7 @@ extension Flow: LoginModuleFlow {
         previousModule = ((window!.rootViewController! as! UINavigationController).viewControllers.last as! Module)
         Huston.shared.operation(inProgress: true)
         Huston.shared.renderStatusView(message: "Requesting session token")
-        SessionAPI.getSessionToken { token in
+        SessionAPI.shared.getSessionToken { token in
             if(token != nil) {
                 Flow.shared.execute {
                     self.setCurrentModule(module: WebModule().prepareModule())

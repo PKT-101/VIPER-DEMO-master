@@ -13,12 +13,12 @@ protocol LoginModuleFlow: LoginFlowProtocol { //exit points from module, should 
 }
 
 
-protocol LoginModuleEventsHandler: AnyObject, ModuleEventsHandler { //user driven/external events handling
+protocol LoginModuleEventsHandler: ModuleEventsHandler { //user driven/external events handling
     func executeLogin()
     func useAsGuest()
 }
 
-protocol LoginModuleViewRenderer: AnyObject, ModuleView {} //request to render view for user
+protocol LoginModuleViewRenderer: ModuleView {} //request to render view for user
 
 class LoginModule: Module, LoginModuleViewRenderer {
     
@@ -26,10 +26,11 @@ class LoginModule: Module, LoginModuleViewRenderer {
     internal weak var eventsHandler: LoginModuleEventsHandler?
     
     override func prepareModule() -> Module {
+        moduleContext = (Flow.shared.dtoDictionary?.removeValue(forKey: DTO.DTO_MODULE_CONTEXT) as? ModuleContext)
         eventsHandler = self
         viewRenderer = self
         eventsHandler!.prepareData()
-        viewRenderer?.renderView()
+        viewRenderer!.renderView()
         return self
     }
     
@@ -41,6 +42,7 @@ class LoginModule: Module, LoginModuleViewRenderer {
 extension LoginModule: LoginModuleEventsHandler {
     
     func prepareData() {
+        Huston.shared.renderStatusView(message: "Please wait while caching data from sever")
         Huston.shared.operation(inProgress: true)
         DataManager.shared.fetchData { success in
             DispatchQueue.main.async {
@@ -55,10 +57,14 @@ extension LoginModule: LoginModuleEventsHandler {
     func pop() {}
     
     func executeLogin() {
-        Flow.shared.executeLogin()
+        Flow.shared.execute {
+            Flow.shared.executeLogin()
+        }
     }
     
     func useAsGuest() {
-        Flow.shared.useAsGuest()
+        Flow.shared.execute {
+            Flow.shared.useAsGuest()
+        }
     }
 }

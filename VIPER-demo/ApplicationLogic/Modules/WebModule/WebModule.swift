@@ -14,17 +14,16 @@ protocol WebModuleFlow { // exit points from module
 }
 
 
-protocol WebModuleEventsHandler: AnyObject {
-    func userLoggedIn()
-}
+protocol WebModuleEventsHandler: ModuleEventsHandler {}
 
-protocol WebModuleViewRenderer: AnyObject, ModuleView {}
+protocol WebModuleViewRenderer: ModuleView {}
 
 class WebModule: Module {
     internal weak var viewRenderer: WebModuleViewRenderer?
     internal weak var eventsHandler: WebModuleEventsHandler?
 
     override func prepareModule() -> Module {
+        moduleContext = (Flow.shared.dtoDictionary?.removeValue(forKey: DTO.DTO_MODULE_CONTEXT) as? ModuleContext)
         eventsHandler = self
         viewRenderer = self
         viewRenderer?.renderView()
@@ -34,13 +33,19 @@ class WebModule: Module {
 
     override func returnToForeground() {
         print("oken")
-        SessionAPI.getSession { result in
+        SessionAPI.shared.getSession { result in
             Flow.shared.loginStatus(success: result)
         }
     }
 }
 
 extension WebModule: WebModuleEventsHandler, WKNavigationDelegate {
+    func prepareData() {}
+    
+    func refreshData() {}
+    
+    func pop() {}
+    
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         if let url = navigationAction.request.url {
@@ -49,9 +54,5 @@ extension WebModule: WebModuleEventsHandler, WKNavigationDelegate {
             return
         }
         decisionHandler(.allow)
-    }
-    
-    func userLoggedIn() {
-         
     }
 }

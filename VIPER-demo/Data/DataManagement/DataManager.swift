@@ -44,11 +44,39 @@ class DataManager {
     func fetchData(onCompletion: @escaping(Bool) -> Void) {
         let lastFetchDate: Date = UserDefaults.standard.value(forKey: LAST_FETCH_DATE_KEY) as? Date ?? Date(timeIntervalSince1970: 0)
         if(lastFetchDate.timeIntervalSince1970 == 0) {
-            MoviesListAPI.fetchGenres { genres in
+
+            MoviesListAPI.shared.fetchGenres { genres in
                 Task {
                     await DataManagerActor.shared.appendRecords(newRecords: genres!)
                     print("Gneres ready")
-                    await DataManagerActor.shared.appendRecords(newRecords: MoviesListAPI.fetchMovies(favourities: false)!)
+                    await Huston.shared.renderStatusView(message: "Downloaded 0.00%")
+                    
+                    /*var movies = [Movie]()
+                    MoviesListAPI.shared.downloadMoviesPage(endpoint: Constants.API.Queries.NOW_PLAYING_LIST, page: 1) { _movies in
+                        var i = 1
+                        var j = 1
+                        repeat {
+                            MoviesListAPI.shared.downloadMoviesPage(endpoint: Constants.API.Queries.NOW_PLAYING_LIST, page: i) { __movies in
+                                if(j == MoviesListAPI.totalPages) {
+                                    Task {
+                                        await DataManagerActor.shared.appendRecords(newRecords: MoviesListAPI.movies)
+                                        MoviesListAPI.resetMovies()
+                                        UserDefaults.standard.setValue(Date(), forKey: LAST_FETCH_DATE_KEY)
+                                        onCompletion(true)
+                                    }
+                                }
+                                /*Task {
+                                    var perc = min((Double(j) / Double(MoviesListAPI.self.totalPages)) * 100, 100.00)
+                                    await Huston.shared.renderStatusView(message: "Downloaded: " + String(format: "%.2f", perc) + "%")
+                                }*/
+                                j = j + 1
+                            }
+                            i = i + 1
+                        } while(i <= MoviesListAPI.totalPages)
+                    }
+                    
+                    */
+                    await DataManagerActor.shared.appendRecords(newRecords: MoviesListAPI.shared.fetchMovies(favourities: false)!)
                     print("Movies ready")
                     UserDefaults.standard.setValue(Date(), forKey: LAST_FETCH_DATE_KEY)
                     onCompletion(true)
@@ -62,7 +90,7 @@ class DataManager {
     func fetchFavourites() {
         if(Huston.shared.userStatus == .loggedIn) {
             Task {
-                await DataManagerActor.shared.updateFavouriteMovies(favouriteMovies: MoviesListAPI.fetchMovies(favourities: true)!)
+                await DataManagerActor.shared.updateFavouriteMovies(favouriteMovies: MoviesListAPI.shared.fetchMovies(favourities: true)!)
                 print("Favs ready")
             }
         }  else if(Huston.shared.userStatus == .guest){
@@ -74,14 +102,14 @@ class DataManager {
     
     func switchFavouriteState(id: Int, isFavoirte: Bool, onCompletion: @escaping() -> Void) {
         if(Huston.shared.userStatus == .loggedIn) {
-            FavouritesAPI.updateFavouritesList(id: id, isFavourite: isFavoirte) { result in
+            FavouritesAPI.shared.updateFavouritesList(id: id, isFavourite: isFavoirte) { result in
                 let realm = try! Realm()
                 realm.beginWrite()
                 let movie = try! Realm().object(ofType: Movie.self, forPrimaryKey: id)
                 movie!.isFavourite = !movie!.isFavourite
                 try! realm.commitWrite()
                 Task {
-                    await DataManagerActor.shared.updateFavouriteMovies(favouriteMovies: MoviesListAPI.fetchMovies(favourities: true)!)
+                    await DataManagerActor.shared.updateFavouriteMovies(favouriteMovies: MoviesListAPI.shared.fetchMovies(favourities: true)!)
                     onCompletion()
                 }
             }

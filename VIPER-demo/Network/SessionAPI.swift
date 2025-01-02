@@ -8,50 +8,39 @@
 import Foundation
 import Alamofire
 
-class SessionAPI {
+class SessionAPI: ApiCommon {
     
     static var token: String?
     static var session: String?
     
-    private static let API_GET_REQUEST_TOKEN = "https://api.themoviedb.org/3/authentication/token/new"
-    private static let API_REQUEST_TOKEN = "request_token"
+    static let shared = SessionAPI()
     
-    static func getSessionToken(onCompletion: @escaping (String?) -> Void)  {
-        let url = URL(string: API_GET_REQUEST_TOKEN)!
+    override private init() {}
+    
+    func getSessionToken(onCompletion: @escaping (String?) -> Void)  {
+        let url = URL(string: Constants.API.Queries.TOKEN)!
         let components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         
-        AF.request(components.url!, headers: AUTHORIZATION_HEADERS).responseJSON { response in
-            if(response.response?.statusCode == 200) {
-                if let json = response.data {
-                    let jsonAsDict = try! JSONSerialization.jsonObject(with: json) as! [String: Any]
-                    token = (jsonAsDict[API_REQUEST_TOKEN] as! String)
-                    onCompletion(token!)
-                }
-            } else {
-                onCompletion(nil)
-            }
+        AF.request(components.url!, headers: Constants.API.Other.AUTHORIZATION_HEADERS).responseJSON { [self] response in
+            getResponse(response: response, processingBlock: {jsonAsDict in
+                SessionAPI.token = (jsonAsDict[Constants.API.FieldsIds.TOKEN] as! String)
+                onCompletion(SessionAPI.token!)
+            })
         }
     }
     
-    private static let API_OPEN_SESSION = "https://api.themoviedb.org/3/authentication/session/new"
-    private static let API_SESSION_ID = "session_id"
-    
-    static func getSession(onCompletion: @escaping (Bool) -> Void) {
-        let parameters = ["request_token": token!] as [String : String]
+    func getSession(onCompletion: @escaping (Bool) -> Void) {
+        let parameters = [Constants.API.ParametersIds.TOKEN: SessionAPI.token!] as [String : String]
 
-        let url = URL(string: API_OPEN_SESSION)!
+        let url = URL(string: Constants.API.Operations.OPEN_SESSION)!
         let components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         
-        AF.request(components.url!, method: HTTPMethod.post, parameters: parameters, headers: AUTHORIZATION_HEADERS).responseJSON { response in
-            if(response.response?.statusCode == 200) {
-                if let json = response.data {
-                    let jsonAsDict = try! JSONSerialization.jsonObject(with: json) as! [String: Any]
-                    session = (jsonAsDict[API_SESSION_ID] as! String)
-                    onCompletion(session != nil)
-                }
-            } else {
-                onCompletion(false)
-            }
+        AF.request(components.url!, method: HTTPMethod.post, parameters: parameters, headers: Constants.API.Other.AUTHORIZATION_HEADERS).responseJSON { [self] response in
+            getResponse(response: response, processingBlock: {jsonAsDict in
+                SessionAPI.session = (jsonAsDict[Constants.API.FieldsIds.SESSION_ID] as! String)
+                onCompletion(SessionAPI.session != nil)
+            })
         }
     }
+    
 }

@@ -9,51 +9,41 @@ import SwiftUI
 import Alamofire
 import ObjectMapper
 
-class MoviesListAPI {
-    
-    static var downloadStatus: OperationStatus?
-    
-    private static let API_GENRES_LIST = "https://api.themoviedb.org/3/genre/movie/list"
-    private static let API_GENRES_LIST_QUERY_ITEM_LANGUAGE = "language"
+class MoviesListAPI: ApiCommon {
 
-    private static let API_GENRES_LIST_KEY = "genres"
+    static let shared = MoviesListAPI()
     
-    static func fetchGenres(onCompletion: @escaping ([Genre]?) -> Void) {
-        let url = URL(string: API_GENRES_LIST)!
+    static var totalPages: Int = 0
+ 
+    //static var moviesDict = [String: Movie]()
+    
+    override private init() {}
+
+    
+    func fetchGenres(onCompletion: @escaping ([Genre]?) -> Void) {
+        let url = URL(string: Constants.API.Queries.GENRES_LIST)!
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         let queryItems: [URLQueryItem] = [
-          URLQueryItem(name: API_GENRES_LIST_QUERY_ITEM_LANGUAGE, value: "en"), // maybe from locale?
+            URLQueryItem(name: Constants.API.ParametersIds.LANGUAGE, value: "en"), // maybe from locale?
         ]
         components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
 
-        AF.request(components.url!, headers: AUTHORIZATION_HEADERS).responseJSON { response in
-            if(response.response?.statusCode == 200) {
-                if let json = response.data {
-                    let jsonAsDict = try! JSONSerialization.jsonObject(with: json) as! [String: Any]
-                    let genresArray = jsonAsDict[API_GENRES_LIST_KEY] as! NSArray
+        AF.request(components.url!, headers: Constants.API.Other.AUTHORIZATION_HEADERS).responseJSON { [self] response in
+            getResponse(response: response, processingBlock: {jsonAsDict in
+                print("result")
+                    let genresArray = jsonAsDict[Constants.API.FieldsIds.GENRES_LIST] as! NSArray
                     let genres = Mapper<Genre>().mapArray(JSONArray: genresArray as! [[String : Any]])
                     onCompletion(genres)
-                }
-            } else {
-                onCompletion(nil)
-            }
+            })
         }
     }
     
-    private static let API_MOVIES = "https://api.themoviedb.org/3/movie/now_playing"
-    private static let API_FAVOURITE_MOVIES = "https://api.themoviedb.org/3/account/21695372/favorite/movies"
-    
-    private static let API_MOVIE_LIST_QUERY_ITEM_LANGUAGE = "language"
-    private static let API_MOVIE_LIST_QUERY_ITEM_PAGE = "page"
-    
-    private static let API_MOVIE_LIST_KEY: String = "results"
-    private static let API_MOVIE_LIST_RESULTS_COUNT_KEY = "total_results"
-    
-    static func fetchMovies(favourities: Bool) async -> ([Movie]?) {
+    func fetchMovies(favourities: Bool) async -> ([Movie]?) {
         var page = 1
         var movies = [Movie]()
         var fetchCompleted = false
         repeat {
+            print("Loop" + String(page))
             let movies_ = await fetchMovies(favourites: favourities, page: page)
             if(movies_ != nil) {
                 movies.append(contentsOf: movies_!)
@@ -62,40 +52,53 @@ class MoviesListAPI {
                     return movies
                 } else {
                     page += 1
+                    await Huston.shared.renderStatusView(message: "Downloaded: " + String(format: "%.2f", min((Double(page) / Double(MoviesListAPI.self.totalPages)) * 100, 100.00)) + "%")
                 }
+            } else {
+                fetchCompleted = true
+                MoviesListAPI.totalPages = 0
+                return movies
             }
         } while (!fetchCompleted)
     }
        
-    static func fetchMovies(favourites: Bool, page: Int) async -> [Movie]? {
+    func fetchMovies(favourites: Bool, page: Int) async -> [Movie]? {
             await withCheckedContinuation{ continuation in
-                downloadJson(endpoint: favourites ? API_FAVOURITE_MOVIES : API_MOVIES, page: page){ movies in
+                downloadMoviesPage(endpoint: favourites ? Constants.API.Queries.FAVOURITES_LIST : Constants.API.Queries.NOW_PLAYING_LIST, page: page){ movies in
                     continuation.resume(returning: movies)
             }
         }
     }
 
-    private static func downloadJson(endpoint: String, page: Int, completion: @escaping ([Movie]?) -> Void) {
-        
+    func downloadMoviesPage(endpoint: String, page: Int, completion: @escaping ([Movie]?) -> Void) {
         let url = URL(string: endpoint)!
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         let queryItems: [URLQueryItem] = [
-            URLQueryItem(name: API_MOVIE_LIST_QUERY_ITEM_LANGUAGE, value: "en-US"), // maybe from locale?
-            URLQueryItem(name: API_MOVIE_LIST_QUERY_ITEM_PAGE, value: String(page)),
+            URLQueryItem(name: Constants.API.ParametersIds.LANGUAGE, value: "en-US"), // maybe from locale?
+            URLQueryItem(name: Constants.API.ParametersIds.PAGE, value: String(page)),
         ]
         components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
         
-        AF.request(components.url!, headers: AUTHORIZATION_HEADERS).responseJSON { response in
-            if(response.response?.statusCode == 200) {
-                if let json = response.data {
-                    let jsonAsDict = try! JSONSerialization.jsonObject(with: json) as! [String: Any]
-                    let moviesArray = jsonAsDict[API_MOVIE_LIST_KEY] as! NSArray
-                    let movies = Mapper<Movie>().mapArray(JSONArray: moviesArray as! [[String : Any]])
-                    completion(movies)
-                } else {
-                    completion(nil)
+        AF.request(components.url!, headers: Constants.API.Other.AUTHORIZATION_HEADERS).responseJSON {[self] response in
+            getResponse(response: response, processingBlock: {jsonAsDict in
+                if(MoviesListAPI.totalPages == 0) {
+                    MoviesListAPI.totalPages = jsonAsDict["total_pages"] as! Int
                 }
-            }
+                let moviesArray = jsonAsDict[Constants.API.FieldsIds.RESULTS] as! NSArray
+                let movies = Mapper<Movie>().mapArray(JSONArray: moviesArray as! [[String : Any]])
+                
+                /*var i = 0  // API returns duplicates???
+                movies.forEach({ movie in
+                    let m = MoviesListAPI.moviesDict.removeValue(forKey: String(movie.id_pk))
+                    if(m != nil) {
+                        print("Buba " + String(i) + " " + String(m!.id_pk))
+                        i = i + 1
+                    }
+                    MoviesListAPI.moviesDict.updateValue(movie, forKey: String(movie.id_pk))
+                })*/
+                
+                completion(movies)
+            })
         }
     }
 }

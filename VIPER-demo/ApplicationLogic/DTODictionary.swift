@@ -9,6 +9,7 @@
 import Foundation
 
 enum DTO {
+    case DTO_MODULE_CONTEXT
     case DTO_MOVIE_ID
 }
 

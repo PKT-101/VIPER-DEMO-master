@@ -32,6 +32,7 @@
 		EFB3D8E32D1699F700E97D3A /* WebModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB3D8E22D1699F700E97D3A /* WebModuleView.swift */; };
 		EFB3D8E52D169A1100E97D3A /* WebModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB3D8E42D169A1100E97D3A /* WebModule.swift */; };
 		EFB3D8E72D169B7300E97D3A /* Module.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB3D8E62D169B7300E97D3A /* Module.swift */; };
+		EFB5B2D62D25634F0010132F /* ApiCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB5B2D52D25634F0010132F /* ApiCommon.swift */; };
 		FDA32DF59E2D3C95BFCD70B6 /* Pods_VIPER_demo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D0EEC49C11BFBF6073020D4 /* Pods_VIPER_demo.framework */; };
 /* End PBXBuildFile section */
 
@@ -66,6 +67,7 @@
 		EFB3D8E22D1699F700E97D3A /* WebModuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebModuleView.swift; sourceTree = "<group>"; };
 		EFB3D8E42D169A1100E97D3A /* WebModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebModule.swift; sourceTree = "<group>"; };
 		EFB3D8E62D169B7300E97D3A /* Module.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Module.swift; sourceTree = "<group>"; };
+		EFB5B2D52D25634F0010132F /* ApiCommon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiCommon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,10 +190,11 @@
 		EFB3D8C12D14ACB400E97D3A /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				EFB3D8C72D14D2B700E97D3A /* MoviesListAPI.swift */,
 				EFB3D8CB2D15467800E97D3A /* SessionAPI.swift */,
+				EFB3D8C72D14D2B700E97D3A /* MoviesListAPI.swift */,
 				EFB3D8CD2D15468800E97D3A /* FavouritesAPI.swift */,
 				EFB3D8CF2D1546C800E97D3A /* APIConstatns.swift */,
+				EFB5B2D52D25634F0010132F /* ApiCommon.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -367,6 +370,7 @@
 				EFB3D8E02D16208700E97D3A /* LoginModule.swift in Sources */,
 				EFB3D8E52D169A1100E97D3A /* WebModule.swift in Sources */,
 				EFB3D8D82D15E50C00E97D3A /* ModifiersAndViewExtensions.swift in Sources */,
+				EFB5B2D62D25634F0010132F /* ApiCommon.swift in Sources */,
 				EFA9E2D32D1ECDA4001BB901 /* DTODictionary.swift in Sources */,
 				EFB3D8CC2D15467800E97D3A /* SessionAPI.swift in Sources */,
 				EFB3D8DB2D15FC0000E97D3A /* Huston.swift in Sources */,

@@ -10,10 +10,10 @@ import Foundation
 import Realm
 import RealmSwift
 
-protocol MovieDetailsModuleEventsHandler: AnyObject, ModuleEventsHandler {
+protocol MovieDetailsModuleEventsHandler: ModuleEventsHandler {
 }
 
-protocol MovieDetailsModuleViewRenderer: AnyObject, ModuleView {}
+protocol MovieDetailsModuleViewRenderer: ModuleView {}
 
 class MovieDetailsModule: Module {
     
@@ -23,6 +23,7 @@ class MovieDetailsModule: Module {
     internal weak var eventsHandler: MovieDetailsModuleEventsHandler?
     
     override func prepareModule() -> Module {
+        moduleContext = (Flow.shared.dtoDictionary?.removeValue(forKey: DTO.DTO_MODULE_CONTEXT) as? ModuleContext)
         eventsHandler = self
         viewRenderer = self
         eventsHandler?.prepareData()
@@ -40,6 +41,8 @@ extension MovieDetailsModule: MovieDetailsModuleEventsHandler {
     func refreshData() {}
     
     func pop() {
-        Flow.shared.pop()
+        Flow.shared.execute {
+            Flow.shared.pop()
+        }
     }
 }

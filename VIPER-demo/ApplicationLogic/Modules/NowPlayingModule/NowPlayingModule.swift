@@ -15,35 +15,45 @@ protocol NowPlayingModuleFlow: LoginFlowProtocol { // exit points from module
 }
 
 
-protocol NowPlayingModuleEventsHandler: AnyObject, ModuleEventsHandler {
+protocol NowPlayingModuleEventsHandler: ModuleEventsHandler {
     func executeLogin()
+    func switchFavouritesOnly()
     func switchFavouriteStatus(movie: Movie)
     func showMovieDetails(id: Int)
 }
 
-protocol NowPlayingModuleViewRenderer: AnyObject, ModuleView {
+protocol NowPlayingModuleViewRenderer: ModuleView {
     func setLoginButton()
+    func setFavoritesOnlyButton()
 }
 
 class NowPlayingModule: Module {
     internal weak var viewRenderer: NowPlayingModuleViewRenderer?
     internal weak var eventsHandler: NowPlayingModuleEventsHandler?
 
+    var showFavouritesOnly = false
     var movies: Results<Movie>?
     var filteredMovies: Results<Movie>?
+    var searchString = ""
     
     override func prepareModule() -> Module {
+        moduleContext = (Flow.shared.dtoDictionary?.removeValue(forKey: DTO.DTO_MODULE_CONTEXT) as? ModuleContext)
         eventsHandler = self
         viewRenderer = self
         
-        eventsHandler?.prepareData()
-        viewRenderer?.renderView()
+        eventsHandler!.prepareData()
+        viewRenderer!.renderView()
         return self
     }
     
     override func refreshModule() {
         eventsHandler!.refreshData()
-        viewRenderer!.setLoginButton()
+        
+        if(Huston.shared.userStatus == .guest) {
+            viewRenderer!.setLoginButton()
+        } else {
+            viewRenderer!.setFavoritesOnlyButton()
+        }
     }
 }
 
@@ -63,13 +73,13 @@ extension NowPlayingModule: NowPlayingModuleEventsHandler {
     }
     
     func switchFavouriteStatus(movie: Movie) {
-        self.view.isUserInteractionEnabled = false
+        Huston.shared.operation(inProgress: true)
         Huston.shared.renderStatusView(message: "Updating favourites list")
         DataManager.shared.switchFavouriteState(id: movie.id_pk, isFavoirte: !movie.isFavourite) { [self] in
             DispatchQueue.main.async {
-                self.view.isUserInteractionEnabled = true
+                Huston.shared.operation(inProgress: false)
                 Huston.shared.renderStatusView(message: "Found " + String(self.movies!.count) + " movies")
-                self.movies = try! Realm().objects(Movie.self).sorted(byKeyPath: "title" , ascending: true)
+                self.tableView?.reloadData()
             }
         }
     }
@@ -82,6 +92,25 @@ extension NowPlayingModule: NowPlayingModuleEventsHandler {
         }
     }
     
+    func switchFavouritesOnly() {
+        showFavouritesOnly = !showFavouritesOnly
+        
+        if(showFavouritesOnly) {
+            movies = try! Realm().objects(Movie.self).where{
+                $0.isFavourite == true
+            }.sorted(byKeyPath: "title" , ascending: true)
+        } else {
+            movies = try! Realm().objects(Movie.self).sorted(byKeyPath: "title" , ascending: true)
+        }
+        
+        filteredMovies = movies
+        filterMovies()
+        viewRenderer!.setFavoritesOnlyButton()
+        
+        Huston.shared.renderStatusView(message: "Foumd " + String(filteredMovies!.count) + " matches")
+        tableView!.reloadData()
+    }
+    
     func showMovieDetails(id: Int) {
         Flow.shared.dtoDictionary!.updateValue(id, forKey: DTO.DTO_MOVIE_ID)
         Flow.shared.execute {
@@ -90,17 +119,21 @@ extension NowPlayingModule: NowPlayingModuleEventsHandler {
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if(searchText.count > 0) {
-            let lowercaseSearchtext = searchText.lowercased()
+        searchString = searchText.lowercased()
+        filterMovies()
+        Huston.shared.renderStatusView(message: "Foumd " + String(filteredMovies!.count) + " matches")
+
+        tableView!.reloadData()
+    }
+    
+    func filterMovies() {
+        if(searchString.count > 0) {
             filteredMovies = movies!.where {
-                $0.searchable.contains(lowercaseSearchtext)
+                $0.searchable.contains(searchString)
             }
         } else {
             filteredMovies = movies
         }
-        Huston.shared.renderStatusView(message: "Foumd " + String(filteredMovies!.count) + " matches")
-
-        tableView!.reloadData()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {

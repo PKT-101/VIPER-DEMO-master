@@ -15,7 +15,11 @@ extension NowPlayingModule: NowPlayingModuleViewRenderer, UISearchBarDelegate {
     func renderView() {
         self.navigationItem.setHidesBackButton(true, animated: false)
         
-        setLoginButton()
+        if(Huston.shared.userStatus == .guest) {
+            setLoginButton()
+        } else {
+            setFavoritesOnlyButton()
+        }
         
         self.view.backgroundColor = UIColor.white
         self.title = "NOW Playing"
@@ -44,8 +48,20 @@ extension NowPlayingModule: NowPlayingModuleViewRenderer, UISearchBarDelegate {
         self.navigationItem.rightBarButtonItem = loginButton
     }
     
+    func setFavoritesOnlyButton() {
+        let switchFavoritesOnlyView = UIBarButtonItem(image: UIImage(systemName: showFavouritesOnly ? "heart.fill" : "heart"), style: UIBarButtonItem.Style.bordered, target: self, action: #selector(switchFavouritesOnly(sender:)))
+        switchFavoritesOnlyView.width = 20
+        switchFavoritesOnlyView.tintColor = UIColor.systemRed
+        
+        self.navigationItem.rightBarButtonItem = switchFavoritesOnlyView
+    }
+    
     @objc func login(sender: UIBarButtonItem) {
         eventsHandler!.executeLogin()
+    }
+    
+    @objc func switchFavouritesOnly(sender: UIBarButtonItem) {
+        eventsHandler?.switchFavouritesOnly()
     }
 }
 

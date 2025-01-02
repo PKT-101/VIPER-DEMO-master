@@ -13,11 +13,11 @@ protocol ModuleLifecycle {
     func refreshModule()
 }
 
-protocol ModuleView {
+protocol ModuleView: AnyObject {
     func renderView()
 }
 
-protocol ModuleEventsHandler {
+protocol ModuleEventsHandler: AnyObject {
     func prepareData()
     func refreshData()
     func pop()
@@ -29,7 +29,7 @@ enum CheckPoint {
 
 class ModuleContext {
     var moduleMode: Any?
-    var flow: Flow?
+    weak var flow: Flow?
     var checkPoint: CheckPoint?
     
     var completionBlock: (() -> (Void))?
@@ -37,7 +37,7 @@ class ModuleContext {
 }
 
 class Module: UIViewController, ModuleLifecycle {
-    
+    var moduleContext: ModuleContext?
     weak var tableView: UITableView?
     
     func prepareModule() -> Module? {
@@ -49,7 +49,6 @@ class Module: UIViewController, ModuleLifecycle {
     func returnToForeground() { //application returned to foreground
         //optional method
     }
-    
 }
 
 
